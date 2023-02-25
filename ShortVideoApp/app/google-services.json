@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "621660686878",
+    "project_id": "shortvideoapp-e7456",
+    "storage_bucket": "shortvideoapp-e7456.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621660686878:android:f9dad4d8b77fb3a99bbc0f",
+        "android_client_info": {
+          "package_name": "com.example.shortvideoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "621660686878-g8b2k90knfmravvc683g29fceuqia07o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl0hMsJiOj6uQI0FbExf1WvBoLjNS38lk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "621660686878-g8b2k90knfmravvc683g29fceuqia07o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
