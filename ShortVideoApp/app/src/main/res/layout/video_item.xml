@@ -30,7 +30,7 @@
         android:id="@+id/homeButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/round_home_24"
+        android:background="@drawable/outline_home_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
@@ -42,7 +42,7 @@
 
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/save"
+        android:background="@drawable/save_24"
         app:layout_constraintBottom_toTopOf="@id/homeButton"
         app:layout_constraintEnd_toEndOf="parent"
 
@@ -62,7 +62,7 @@
         android:id="@+id/shareButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/baseline_share_24"
+        android:background="@drawable/outline_share_24"
         app:layout_constraintBottom_toTopOf="@id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
 
@@ -72,7 +72,7 @@
         android:id="@+id/commentsButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/baseline_comment_24"
+        android:background="@drawable/outline_comment_24"
         app:layout_constraintBottom_toTopOf="@id/shareButton"
         app:layout_constraintEnd_toEndOf="parent"
 
