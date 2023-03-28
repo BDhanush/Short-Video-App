@@ -1,7 +1,9 @@
 package com.example.shortvideoapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
 import com.example.shortvideoapp.model.Video
@@ -9,6 +11,11 @@ import com.example.shortvideoapp.model.Video
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Intent(this,LoginActivity::class.java).also{
+            startActivity(it)
+        }
+
         setContentView(R.layout.activity_main)
 
         val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
