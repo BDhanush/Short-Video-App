@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -22,8 +21,8 @@ class SignupActivity : AppCompatActivity() {
         val loginButton:Button=findViewById(R.id.haveAccountText)
 
         loginButton.setOnClickListener {
+            finish()
             Intent(this,LoginActivity::class.java).also{
-                finish()
                 startActivity(it)
             }
         }
