@@ -18,7 +18,7 @@ class SignupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
         val signupButton:Button=findViewById(R.id.signupButton)
-        val loginButton:Button=findViewById(R.id.haveAccountText)
+        val loginButton:Button=findViewById(R.id.loginButton)
 
         loginButton.setOnClickListener {
             finish()
