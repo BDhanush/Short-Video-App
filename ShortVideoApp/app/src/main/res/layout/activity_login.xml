@@ -30,7 +30,7 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/username_layout"
+            android:id="@+id/usernameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/username_input"
+                android:id="@+id/usernameInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -49,7 +49,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/password_layout"
+            android:id="@+id/passwordLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -58,10 +58,10 @@
             app:startIconDrawable="@drawable/baseline_lock_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/username_layout">
+            app:layout_constraintTop_toBottomOf="@id/usernameLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_input"
+                android:id="@+id/passwordInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
@@ -69,18 +69,18 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/forgot_password_button"
+            android:id="@+id/forgotPasswordButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/forgot_password_question"
             android:textSize="14sp"
             android:backgroundTint="#000000"
-            app:layout_constraintEnd_toEndOf="@id/password_layout"
-            app:layout_constraintTop_toBottomOf="@id/password_layout"/>
+            app:layout_constraintEnd_toEndOf="@id/passwordLayout"
+            app:layout_constraintTop_toBottomOf="@id/passwordLayout"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/login_button"
+            android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
@@ -88,18 +88,18 @@
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password_layout" />
+            app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/signup_button"
+            android:id="@+id/signupButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/no_account"
             android:textSize="14sp"
             android:backgroundTint="#000000"
-            app:layout_constraintEnd_toEndOf="@id/password_layout"
-            app:layout_constraintTop_toBottomOf="@id/login_button"/>
+            app:layout_constraintEnd_toEndOf="@id/passwordLayout"
+            app:layout_constraintTop_toBottomOf="@id/loginButton"/>
 
 
     </LinearLayout>
