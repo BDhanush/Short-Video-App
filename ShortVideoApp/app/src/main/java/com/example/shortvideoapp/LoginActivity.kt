@@ -1,17 +1,21 @@
 package com.example.shortvideoapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
+import android.widget.Button
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        val s:EditText=findViewById(R.id.username_input)
+
+        val signupButton:Button=findViewById(R.id.signupButton)
+        signupButton.setOnClickListener{
+            Intent(this,SignupActivity::class.java).also{
+                startActivity(it)
+            }
+        }
 
     }
 
