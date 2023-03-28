@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Intent(this,SignupActivity::class.java).also{
+        Intent(this,LoginActivity::class.java).also{
             startActivity(it)
         }
 
