@@ -1,70 +1,24 @@
 package com.example.shortvideoapp.adapter
 
+import android.os.Bundle
 import android.content.Context
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.MediaController
+import android.widget.TextView
+import android.widget.VideoView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
 
-
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
-    inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
-        val seekBar:SeekBar = view.findViewById(R.id.seekbar)
-
-        init{
-
-            val onEverySecond: Runnable = object : Runnable {
-                override fun run() {
-                    seekBar.progress = videoView.currentPosition
-                    if (videoView.isPlaying) {
-                        seekBar.postDelayed(this, 1000)
-                    }
-                }
-            }
-
-            videoView.setOnPreparedListener{ mp ->
-                val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
-                val screenRatio = videoView.width / videoView.height.toFloat()
-                val scaleX = videoRatio / screenRatio
-                if (scaleX >= 1f) {
-                    videoView.scaleX = scaleX
-                } else {
-                    videoView.scaleY = 1f / scaleX
-                }
-                mp.start()
-                mp.isLooping = true
-                seekBar.max = videoView.duration
-                seekBar.postDelayed(onEverySecond, 1000)
-            }
-            videoView.setOnClickListener{
-                Toast.makeText(it.context, if (videoView.isPlaying) "pause" else "play", Toast.LENGTH_SHORT).show();
-                if (videoView.isPlaying) {
-                    videoView.pause()
-                } else {
-                    videoView.start()
-                }
-            }
-
-            seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                override fun onStopTrackingTouch(seekBar: SeekBar) {}
-                override fun onStartTrackingTouch(seekBar: SeekBar) {}
-                override fun onProgressChanged(
-                    seekBar: SeekBar, progress: Int,
-                    fromUser: Boolean
-                ) {
-                    if (fromUser) {
-                        // this is when actually seekbar has been seeked to a new position
-                        videoView.seekTo(progress)
-                    }
-                }
-            })
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -79,6 +33,18 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
         val item = dataset[position]
 
         holder.videoView.setVideoPath(item.videoURL)
+        holder.videoView.setOnPreparedListener{ mp ->
+            val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
+            val screenRatio = holder.videoView.width / holder.videoView.height.toFloat()
+            val scaleX = videoRatio / screenRatio
+            if (scaleX >= 1f) {
+                holder.videoView.scaleX = scaleX
+            } else {
+                holder.videoView.scaleY = 1f / scaleX
+            }
+            mp.start()
+            mp.isLooping = true
+        }
     }
 
     /**
