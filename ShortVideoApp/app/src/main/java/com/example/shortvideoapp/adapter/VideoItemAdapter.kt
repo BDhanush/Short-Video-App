@@ -1,16 +1,15 @@
 package com.example.shortvideoapp.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.*
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
-import kotlinx.coroutines.NonCancellable.start
+
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
@@ -19,6 +18,16 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
         val seekBar:SeekBar = view.findViewById(R.id.seekbar)
 
         init{
+
+            val onEverySecond: Runnable = object : Runnable {
+                override fun run() {
+                    seekBar.progress = videoView.currentPosition
+                    if (videoView.isPlaying) {
+                        seekBar.postDelayed(this, 1000)
+                    }
+                }
+            }
+
             videoView.setOnPreparedListener{ mp ->
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
                 val screenRatio = videoView.width / videoView.height.toFloat()
@@ -30,18 +39,31 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                 }
                 mp.start()
                 mp.isLooping = true
+                seekBar.max = videoView.duration
+                seekBar.postDelayed(onEverySecond, 1000)
             }
-            var pauseCheck:Boolean = false;
             videoView.setOnClickListener{
-                Toast.makeText(it.context, "$pauseCheck", Toast.LENGTH_SHORT).show();
-                pauseCheck = if (!pauseCheck) {
+                Toast.makeText(it.context, if (videoView.isPlaying) "pause" else "play", Toast.LENGTH_SHORT).show();
+                if (videoView.isPlaying) {
                     videoView.pause()
-                    true
                 } else {
                     videoView.start()
-                    false
                 }
             }
+
+            seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                override fun onStartTrackingTouch(seekBar: SeekBar) {}
+                override fun onProgressChanged(
+                    seekBar: SeekBar, progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        // this is when actually seekbar has been seeked to a new position
+                        videoView.seekTo(progress)
+                    }
+                }
+            })
         }
     }
 
