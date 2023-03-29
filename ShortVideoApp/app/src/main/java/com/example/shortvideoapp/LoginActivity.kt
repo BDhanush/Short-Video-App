@@ -41,6 +41,9 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                         val user = auth.currentUser
                         finish()
+                        Intent(this,MainActivity::class.java).also{
+                            startActivity(it)
+                        }
                     } else {
                         // If sign in fails, display a message to the user.
                         Toast.makeText(
@@ -52,6 +55,17 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            Intent(this,MainActivity::class.java).also{
+                startActivity(it)
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("moveTaskToBack(true)"))
