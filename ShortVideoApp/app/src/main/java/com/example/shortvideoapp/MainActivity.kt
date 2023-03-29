@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.VideoView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
 import com.example.shortvideoapp.model.Video
@@ -11,10 +12,6 @@ import com.example.shortvideoapp.model.Video
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Intent(this,LoginActivity::class.java).also{
-            startActivity(it)
-        }
 
         setContentView(R.layout.activity_main)
 
@@ -25,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         videosURlList.add(Video("https://cdn.discordapp.com/attachments/765130391119593482/1081900110121807872/chatgpt.mp4"));
         videosURlList.add(Video("https://cdn.discordapp.com/attachments/910134893151911946/1021783588187938826/VID-20220408-WA0001.mp4"));
         videosViewPager.adapter = VideoItemAdapter(this,videosURlList);
+
 
     }
 }
