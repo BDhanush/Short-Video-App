@@ -58,7 +58,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     public override fun onStart() {
+
         super.onStart()
+        auth = Firebase.auth
+
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if(currentUser != null){
