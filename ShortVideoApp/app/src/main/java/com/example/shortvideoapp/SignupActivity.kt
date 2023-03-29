@@ -1,6 +1,5 @@
 package com.example.shortvideoapp
 
-import android.app.ProgressDialog.show
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
