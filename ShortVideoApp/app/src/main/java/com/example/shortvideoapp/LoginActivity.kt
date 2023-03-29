@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
                     } else {
                         // If sign in fails, display a message to the user.
                         Toast.makeText(
-                            this, "signInWithEmail:failure",
+                            this, "signInWithEmail:failure ${task.exception}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

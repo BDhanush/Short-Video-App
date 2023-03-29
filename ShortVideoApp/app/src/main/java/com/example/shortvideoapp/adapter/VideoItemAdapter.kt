@@ -1,24 +1,48 @@
 package com.example.shortvideoapp.adapter
 
-import android.os.Bundle
+import android.annotation.SuppressLint
 import android.content.Context
-import android.media.AudioManager
-import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.MediaController
-import android.widget.TextView
-import android.widget.VideoView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
+import kotlinx.coroutines.NonCancellable.start
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
-    class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
+        val seekBar:SeekBar = view.findViewById(R.id.seekbar)
+
+        init{
+            videoView.setOnPreparedListener{ mp ->
+                val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
+                val screenRatio = videoView.width / videoView.height.toFloat()
+                val scaleX = videoRatio / screenRatio
+                if (scaleX >= 1f) {
+                    videoView.scaleX = scaleX
+                } else {
+                    videoView.scaleY = 1f / scaleX
+                }
+                mp.start()
+                mp.isLooping = true
+            }
+            var pauseCheck:Boolean = false;
+            videoView.setOnClickListener{
+                Toast.makeText(it.context, "$pauseCheck", Toast.LENGTH_SHORT).show();
+                pauseCheck = if (!pauseCheck) {
+                    videoView.pause()
+                    true
+                } else {
+                    videoView.start()
+                    false
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -33,18 +57,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
         val item = dataset[position]
 
         holder.videoView.setVideoPath(item.videoURL)
-        holder.videoView.setOnPreparedListener{ mp ->
-            val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
-            val screenRatio = holder.videoView.width / holder.videoView.height.toFloat()
-            val scaleX = videoRatio / screenRatio
-            if (scaleX >= 1f) {
-                holder.videoView.scaleX = scaleX
-            } else {
-                holder.videoView.scaleY = 1f / scaleX
-            }
-            mp.start()
-            mp.isLooping = true
-        }
     }
 
     /**
