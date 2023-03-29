@@ -16,6 +16,7 @@ class LoginActivity : AppCompatActivity() {
                 finish()
                 startActivity(it)
             }
+
         }
 
     }

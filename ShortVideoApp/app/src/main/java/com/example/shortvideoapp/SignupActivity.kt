@@ -36,6 +36,7 @@ class SignupActivity : AppCompatActivity() {
         val email:EditText=findViewById(R.id.emailInput)
         val password:EditText=findViewById(R.id.passwordInput)
 
+
         auth = Firebase.auth
         auth.createUserWithEmailAndPassword(email.text.toString(),password.text.toString()).addOnCompleteListener(this) {
 
