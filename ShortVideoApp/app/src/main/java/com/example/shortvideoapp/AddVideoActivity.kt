@@ -3,6 +3,7 @@ package com.example.shortvideoapp
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,11 +18,13 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.net.URI
 
 /*add a new video*/
 class AddVideoActivity : AppCompatActivity() {
@@ -110,9 +113,9 @@ class AddVideoActivity : AppCompatActivity() {
         storageReference.putFile(videoUri!!)
             .addOnSuccessListener { taskSnapshot ->
                 //get url of uploaded video
-                val uriTask = taskSnapshot.storage.downloadUrl
+                val uriTask:Task<Uri> = taskSnapshot.storage.downloadUrl
                 while (!uriTask.isSuccessful);
-                val downloadUri = uriTask.result
+                val downloadUrl = uriTask.result
                 if (uriTask.isSuccessful) {
                     //video url is received successfully
 
@@ -121,7 +124,7 @@ class AddVideoActivity : AppCompatActivity() {
                     hashMap["id"] = "$timestamp"
                     hashMap["title"] = "$title"
                     hashMap["timestamp"] = "$timestamp"
-                    hashMap["videoUri"] = "$downloadUri"
+                    hashMap["videoUri"] = "$downloadUrl"
 
                     //put details into Database
                     val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
