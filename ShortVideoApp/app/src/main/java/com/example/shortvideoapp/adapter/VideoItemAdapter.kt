@@ -19,12 +19,10 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
 
         init{
 
-            val onEverySecond: Runnable = object : Runnable {
+            val update: Runnable = object : Runnable {
                 override fun run() {
                     seekBar.progress = videoView.currentPosition
-                    if (videoView.isPlaying) {
-                        seekBar.postDelayed(this, 1000)
-                    }
+                    seekBar.postDelayed(this, 1)
                 }
             }
 
@@ -39,8 +37,10 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                 }
                 mp.start()
                 mp.isLooping = true
+
+
                 seekBar.max = videoView.duration
-                seekBar.postDelayed(onEverySecond, 1000)
+                seekBar.postDelayed(update, 1)
             }
             videoView.setOnClickListener{
                 Toast.makeText(it.context, if (videoView.isPlaying) "pause" else "play", Toast.LENGTH_SHORT).show();
