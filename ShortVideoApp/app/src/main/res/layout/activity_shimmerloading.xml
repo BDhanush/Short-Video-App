@@ -10,7 +10,7 @@
 
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background=""
+        android:background="@color/shimmer"
 
 
         app:layout_constraintTop_toTopOf="parent"
