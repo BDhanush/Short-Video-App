@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/moreButton"
+
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background=""
+
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="5dp" />
+
+    <TextView
+        android:id="@+id/homeButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/shimmer"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        />
+    <TextView
+        android:id="@+id/saveButton"
+
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/shimmer"
+
+        app:layout_constraintBottom_toTopOf="@id/homeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/downvoteButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/shimmer"
+        app:layout_constraintBottom_toTopOf="@id/commentsButton"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp" />
+    <TextView
+        android:id="@+id/shareButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/shimmer"
+
+        app:layout_constraintBottom_toTopOf="@id/saveButton"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp" />
+    <TextView
+        android:id="@+id/commentsButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/shimmer"
+
+        app:layout_constraintBottom_toTopOf="@id/shareButton"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp" />
+    <TextView
+        android:id="@+id/upvoteButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/shimmer"
+
+        app:layout_constraintBottom_toTopOf="@id/downvoteButton"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="5dp" />
+
+    <ImageView
+        android:id="@+id/profilePicture"
+        android:background="@color/shimmer"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/seekbar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/shimmer"
+        android:progressDrawable="@android:color/transparent"
+        android:max="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/homeButton"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="5dp"
+
+        />
+
+    <!--    <TextView-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        tools:text="creater name"-->
+    <!--        app:layout_constraintBottom_toTopOf="@id/title"-->
+    <!--        app:layout_constraintLeft_toRightOf="@id/profilePicture"-->
+
+    <!--        android:textSize="20dp"-->
+    <!--        android:layout_marginLeft="16dp"-->
+    <!--        android:layout_marginBottom="16dp"/>-->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        tools:text="Title of the video"
+        android:background="@color/shimmer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/moreButton"
+        android:layout_marginRight="5dp"
+
+
+        android:textSize="25dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:textSize="16dp"
+        android:visibility="visible"
+
+        app:layout_constraintBottom_toTopOf="@id/creatorName"
+        app:layout_constraintLeft_toLeftOf="@id/title"
+        app:layout_constraintRight_toLeftOf="@id/homeButton"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="" />
+
+    <TextView
+        android:id="@+id/creatorName"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="5dp"
+
+        android:layout_marginRight="16dp"
+        android:textSize="18dp"
+        android:background="@color/shimmer"
+
+        app:layout_constraintBottom_toBottomOf="@id/profilePicture"
+        app:layout_constraintLeft_toRightOf="@id/profilePicture"
+        app:layout_constraintRight_toLeftOf="@id/homeButton"
+        app:layout_constraintTop_toTopOf="@id/profilePicture"
+        tools:text="creatorName" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
