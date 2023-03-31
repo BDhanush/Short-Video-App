@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.SeekBar.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
+import com.facebook.shimmer.ShimmerFrameLayout
 
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
@@ -16,7 +18,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
         val seekBar:SeekBar = view.findViewById(R.id.seekbar)
-
+        private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
+        private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
         init{
 
             val update: Runnable = object : Runnable {
@@ -27,6 +30,10 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
             }
 
             videoView.setOnPreparedListener{ mp ->
+
+                shimmerLoading.visibility= GONE
+                loadedVideo.visibility= VISIBLE
+
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
                 val screenRatio = videoView.width / videoView.height.toFloat()
                 val scaleX = videoRatio / screenRatio

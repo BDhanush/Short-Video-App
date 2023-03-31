@@ -23,7 +23,7 @@
         android:id="@+id/homeButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/shimmer"
+        android:background="@drawable/outline_home_24"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,6 +76,8 @@
 
         android:layout_marginRight="16dp"
         android:layout_marginBottom="10dp" />
+
+
     <TextView
         android:id="@+id/upvoteButton"
         android:layout_width="40dp"
@@ -95,12 +97,12 @@
         android:layout_height="30dp"
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@id/seekbar"
+        app:layout_constraintBottom_toTopOf="@id/seekbar1"
         app:layout_constraintLeft_toLeftOf="parent"
         />
 
     <SeekBar
-        android:id="@+id/seekbar"
+        android:id="@+id/seekbar1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/shimmer"
