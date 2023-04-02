@@ -1,9 +1,9 @@
 package com.example.shortvideoapp.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,6 +15,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
+    @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
         val seekBar:SeekBar = view.findViewById(R.id.seekbar)
@@ -57,6 +58,17 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                     videoView.start()
                 }
             }
+            val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    if (videoView.isPlaying) {
+                        videoView.pause()
+                    } else {
+                        videoView.start()
+                    }
+                    return super.onSingleTapConfirmed(e)
+                }
+            })
+            videoView.setOnTouchListener { _, event -> videoGestureDetector.onTouchEvent(event) }
 
             seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
