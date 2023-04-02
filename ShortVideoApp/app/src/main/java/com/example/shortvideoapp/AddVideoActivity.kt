@@ -46,7 +46,7 @@ class AddVideoActivity : AppCompatActivity() {
     //uri of picked video
     private var videoUri: android.net.Uri? = null
 
-    private var title:String = "";
+    private var title:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,9 +121,9 @@ class AddVideoActivity : AppCompatActivity() {
 
                     //video details
                     val hashMap = HashMap<String, Any>()
-                    hashMap["id"] = "$timestamp"
-                    hashMap["title"] = "$title"
-                    hashMap["timestamp"] = "$timestamp"
+                    hashMap["id"] = timestamp
+                    hashMap["title"] = title
+                    hashMap["timestamp"] = timestamp
                     hashMap["videoUri"] = "$downloadUrl"
 
                     //put details into Database

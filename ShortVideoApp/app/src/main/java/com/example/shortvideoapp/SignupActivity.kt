@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 
 class SignupActivity : AppCompatActivity() {
@@ -38,16 +39,29 @@ class SignupActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email.text.toString(),password.text.toString()).addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
-                Toast.makeText(
-                    this, "Authentication successful.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
+                val timestamp = ""+System.currentTimeMillis()
+
+                //user details
+                val hashMap = HashMap<String, Any>()
+                hashMap["id"] = timestamp
+                hashMap["email"] = "${email.text}"
+                hashMap["password"] = "${password.text}"
+                hashMap["timestamp"] = timestamp
+
+                //put details into Database
+                val dbReference = FirebaseDatabase.getInstance().getReference("Users")
+                dbReference.child(timestamp).setValue(hashMap)
+                    .addOnSuccessListener { taskSnapshot ->
+                        //user details added successfully
+                        Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        //failed adding user details
+                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                    }
             } else {
-                Toast.makeText(
-                    this, "Authentication failed.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
             }
         }
     }
