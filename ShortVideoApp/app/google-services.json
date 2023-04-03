@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "621660686878",
+    "firebase_url": "https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "shortvideoapp-e7456",
     "storage_bucket": "shortvideoapp-e7456.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "621660686878-kra76egupprha3pe4llt8n35smh7j9a7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shortvideoapp",
+            "certificate_hash": "fa604dea366dea7b012b5abfc4531a217f9ec24f"
+          }
+        },
         {
           "client_id": "621660686878-g8b2k90knfmravvc683g29fceuqia07o.apps.googleusercontent.com",
           "client_type": 3
