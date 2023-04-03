@@ -50,17 +50,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                 seekBar.max = videoView.duration
                 seekBar.postDelayed(update, 1)
             }
-//            videoView.setOnClickListener{
-//                if (videoView.isPlaying) {
-//                    videoView.pause()
-//                } else {
-//                    videoView.start()
-//                }
-//            }
-            val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+             val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                    Toast.makeText(
-                        context, if (videoView.isPlaying) "pause" else "play", Toast.LENGTH_SHORT).show();
                     if (videoView.isPlaying) {
                         videoView.pause()
                     } else {
@@ -70,6 +61,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                 }
             })
             videoView.setOnTouchListener { _, event -> videoGestureDetector.onTouchEvent(event) }
+
 
             seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
