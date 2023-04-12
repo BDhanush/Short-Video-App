@@ -1,0 +1,97 @@
+<!-- res/layout/profile_page_layout.xml -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Profile image -->
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/profile_image"
+        android:layout_marginTop="32dp"
+        android:layout_centerHorizontal="true" />
+
+    <!-- Profile name -->
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bommi"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/profileImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <!-- Profile bio -->
+    <TextView
+        android:id="@+id/profileBio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Peepee Poopoo"
+        android:textSize="16sp"
+        android:layout_below="@+id/profileName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp" />
+
+    <!-- Profile stats: followers, following, posts -->
+    <LinearLayout
+        android:id="@+id/profileStats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/profileBio"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/textFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Followers: 100"
+            android:textSize="14sp"
+            android:layout_marginRight="16dp" />
+
+        <TextView
+            android:id="@+id/textFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Following: 50"
+            android:textSize="14sp"
+            android:layout_marginRight="16dp" />
+
+        <TextView
+            android:id="@+id/textPosts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Posts: 200"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- Edit profile button -->
+    <Button
+        android:id="@+id/btnEditProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Profile"
+        android:layout_below="@+id/profileStats"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <!-- Grid of posts -->
+    <GridView
+        android:id="@+id/gridPosts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btnEditProfile"
+        android:layout_marginTop="16dp"
+        android:numColumns="3"
+        android:horizontalSpacing="8dp"
+        android:verticalSpacing="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp" />
+
+</RelativeLayout>
