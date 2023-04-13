@@ -132,9 +132,9 @@ class AddVideoActivity : AppCompatActivity() {
                 isMinBitrateCheckEnabled = true,
                 videoBitrateInMbps = 5,
                 disableAudio = false,
-                keepOriginalResolution = false,
-                videoWidth = 360.0,
-                videoHeight = 480.0
+                keepOriginalResolution = true
+//                videoWidth = 360.0,
+//                videoHeight = 480.0
             ),
             listener = object : CompressionListener {
                 override fun onProgress(index: Int, percent: Float) {
@@ -176,6 +176,14 @@ class AddVideoActivity : AppCompatActivity() {
                                         //video details added successfully
                                         progressDialog.dismiss()
                                         Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
+
+                                        // Delete the compressed video from local storage
+                                        val compressedVideoFile = path?.let { File(it) }
+                                        if (compressedVideoFile != null) {
+                                            if (compressedVideoFile.exists()) {
+                                                compressedVideoFile.delete()
+                                            }
+                                        }
                                     }
                                     .addOnFailureListener { e ->
                                         //failed adding video details
