@@ -20,5 +20,12 @@ class UploadActivity : AppCompatActivity() {
             //starts the activity that adds a new video
             startActivity(Intent(this, AddVideoActivity::class.java))
         }
+
+        //handle reelsPage button click
+        val reelsPageButton:FloatingActionButton=findViewById(R.id.reelsPageButtonFab)
+        reelsPageButton.setOnClickListener {
+            //starts the activity that adds a new video
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 }
