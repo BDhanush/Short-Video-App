@@ -18,12 +18,20 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.abedelazizshe.lightcompressorlibrary.CompressionListener
+import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
+import com.abedelazizshe.lightcompressorlibrary.VideoQuality
+import com.abedelazizshe.lightcompressorlibrary.config.AppSpecificStorageConfiguration
+import com.abedelazizshe.lightcompressorlibrary.config.Configuration
+import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation
+import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration
 import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 import java.net.URI
 
 /*add a new video*/
@@ -109,44 +117,94 @@ class AddVideoActivity : AppCompatActivity() {
 
         //storage reference
         val storageReference = FirebaseStorage.getInstance().getReference(filePathAndName)
-        //upload video using uri of video
-        storageReference.putFile(videoUri!!)
-            .addOnSuccessListener { taskSnapshot ->
-                //get url of uploaded video
-                val uriTask:Task<Uri> = taskSnapshot.storage.downloadUrl
-                while (!uriTask.isSuccessful);
-                val downloadUrl = uriTask.result
-                if (uriTask.isSuccessful) {
-                    //video url is received successfully
 
-                    //video details
-                    val hashMap = HashMap<String, Any>()
-                    hashMap["id"] = timestamp
-                    hashMap["title"] = title
-                    hashMap["timestamp"] = timestamp
-                    hashMap["videoUri"] = "$downloadUrl"
+        //compress video before uploading
+        VideoCompressor.start(
+            context = applicationContext,
+            uris = listOf(videoUri!!),
+            isStreamable = false,
+            sharedStorageConfiguration = SharedStorageConfiguration(
+                saveAt = SaveLocation.movies,
+                videoName = "compressed_video"
+            ),
+            configureWith = Configuration(
+                quality = VideoQuality.MEDIUM,
+                isMinBitrateCheckEnabled = true,
+                videoBitrateInMbps = 5,
+                disableAudio = false,
+                keepOriginalResolution = false,
+                videoWidth = 360.0,
+                videoHeight = 480.0
+            ),
+            listener = object : CompressionListener {
+                override fun onProgress(index: Int, percent: Float) {
+                    // Update UI with progress value
+                    runOnUiThread {
+                        // Update progress dialog
+                        progressDialog.progress = percent.toInt()
+                    }
+                }
 
-                    //put details into Database
-                    val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
-                    dbReference.child(timestamp).setValue(hashMap)
+                override fun onStart(index: Int) {
+                    // Compression start
+                }
+
+                override fun onSuccess(index: Int, size: Long, path: String?) {
+                    // On Compression success
+                    //upload compressed video to firebase
+                    val compressedVideoUri = Uri.fromFile(path?.let { File(it) })
+                    storageReference.putFile(compressedVideoUri)
                         .addOnSuccessListener { taskSnapshot ->
-                            //video details added successfully
-                            progressDialog.dismiss()
-                            Toast.makeText(this, "Video Uploaded", Toast.LENGTH_SHORT).show()
+                            //get url of uploaded video
+                            val uriTask: Task<Uri> = taskSnapshot.storage.downloadUrl
+                            while (!uriTask.isSuccessful);
+                            val downloadUrl = uriTask.result
+                            if (uriTask.isSuccessful) {
+                                //video url is received successfully
+
+                                //video details
+                                val hashMap = HashMap<String, Any>()
+                                hashMap["id"] = timestamp
+                                hashMap["title"] = title
+                                hashMap["timestamp"] = timestamp
+                                hashMap["videoUri"] = "$downloadUrl"
+
+                                //put details into Database
+                                val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
+                                dbReference.child(timestamp).setValue(hashMap)
+                                    .addOnSuccessListener { taskSnapshot ->
+                                        //video details added successfully
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        //failed adding video details
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
+
+                            }
                         }
                         .addOnFailureListener { e ->
-                            //failed adding video details
+                            //failed uploading
                             progressDialog.dismiss()
-                            Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
                         }
+                }
 
+                override fun onFailure(index: Int, failureMessage: String) {
+                    // On Failure
+                    progressDialog.dismiss()
+                    Toast.makeText(this@AddVideoActivity, "Compression failed: $failureMessage", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onCancelled(index: Int) {
+                    // On Cancelled
+                    progressDialog.dismiss()
+                    Toast.makeText(this@AddVideoActivity, "Compression cancelled", Toast.LENGTH_SHORT).show()
                 }
             }
-            .addOnFailureListener { e ->
-                //failed uploading
-                progressDialog.dismiss()
-                Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        )
     }
 
     private fun setVideoToVideoView() {
