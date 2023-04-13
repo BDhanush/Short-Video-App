@@ -13,18 +13,14 @@ import com.google.firebase.database.ValueEventListener
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
-        val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
-
-
-        val videosURlList = mutableListOf<Video>()
-        getVideoUrlsFromFirebase(videosURlList)
-        videosViewPager.adapter = VideoItemAdapter(this,videosURlList);
+        playVideosFromFirebase()
     }
 
-    private fun getVideoUrlsFromFirebase(videos: MutableList<Video>) {
+    private fun playVideosFromFirebase() {
+        val videos: MutableList<Video> = mutableListOf()
+        val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
         val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
         dbReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -36,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                     val video = Video(videoUri)
                     videos.add(video)
                 }
+                videosViewPager.adapter = VideoItemAdapter(this@MainActivity, videos)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
