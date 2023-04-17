@@ -73,7 +73,7 @@ class SignupActivity : AppCompatActivity() {
         //put details into Database
         val user = User(uid,username,firstName,lastName,email);
         val dbReference = FirebaseDatabase.getInstance().getReference("users")
-        dbReference.child(uid).setValue(Collections.singletonList(user))
+        dbReference.child(uid).setValue(user)
             .addOnSuccessListener {
                 //user details added successfully
                 Toast.makeText(
