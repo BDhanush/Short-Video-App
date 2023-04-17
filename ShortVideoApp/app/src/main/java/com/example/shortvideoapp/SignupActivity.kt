@@ -43,7 +43,7 @@ class SignupActivity : AppCompatActivity() {
 
 
         auth = Firebase.auth
-        database = FirebaseDatabase.getInstance().getReference("users")
+        database = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
         auth.createUserWithEmailAndPassword(email.text.toString(),password.text.toString()).addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
@@ -52,7 +52,7 @@ class SignupActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                writeNewUser("",username.toString(),"","",email.toString());
+                writeNewUser("",username.text.toString(),"","",email.text.toString());
 
                 finish()
 
@@ -66,23 +66,8 @@ class SignupActivity : AppCompatActivity() {
     }
     fun writeNewUser(uid:String,username:String,firstName:String,lastName:String,email:String) {
 
-        Toast.makeText(
-            this, "function called",
-            Toast.LENGTH_SHORT
-        ).show()
-
         val user = User(uid,username,firstName,lastName,email);
-        database.child(uid).setValue(user).addOnCompleteListener {
-            Toast.makeText(
-                this, "data pushed",
-                Toast.LENGTH_SHORT
-            ).show()
-        }.addOnFailureListener{
-            Toast.makeText(
-                this, it.toString(),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        database.child("users").child(auth.currentUser!!.uid).setValue(user)
     }
 }
 
