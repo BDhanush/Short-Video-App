@@ -44,6 +44,15 @@ class SignupActivity : AppCompatActivity() {
 
         auth = Firebase.auth
         database = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+
+        if (password.text.toString() != confirmPassword.text.toString()) {
+            Toast.makeText(
+                this, "Passwords do not match.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         auth.createUserWithEmailAndPassword(email.text.toString(),password.text.toString()).addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
