@@ -11,8 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -43,7 +43,6 @@ class SignupActivity : AppCompatActivity() {
 
 
         auth = Firebase.auth
-        database = FirebaseDatabase.getInstance().getReference("users")
         auth.createUserWithEmailAndPassword(email.text.toString(),password.text.toString()).addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
@@ -52,7 +51,8 @@ class SignupActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                writeNewUser("",username.toString(),"","",email.toString());
+                val timestamp = ""+System.currentTimeMillis()
+                writeNewUser(timestamp,username.toString(),"default","default",email.toString());
 
                 finish()
 
@@ -64,25 +64,30 @@ class SignupActivity : AppCompatActivity() {
             }
         }
     }
-    fun writeNewUser(uid:String,username:String,firstName:String,lastName:String,email:String) {
-
+    private fun writeNewUser(uid:String,username:String,firstName:String,lastName:String,email:String) {
         Toast.makeText(
             this, "function called",
             Toast.LENGTH_SHORT
         ).show()
 
+        //put details into Database
         val user = User(uid,username,firstName,lastName,email);
-        database.child(uid).setValue(user).addOnCompleteListener {
-            Toast.makeText(
-                this, "data pushed",
-                Toast.LENGTH_SHORT
-            ).show()
-        }.addOnFailureListener{
-            Toast.makeText(
-                this, it.toString(),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        val dbReference = FirebaseDatabase.getInstance().getReference("users")
+        dbReference.child(uid).setValue(Collections.singletonList(user))
+            .addOnSuccessListener {
+                //user details added successfully
+                Toast.makeText(
+                    this, "data pushed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .addOnFailureListener { e ->
+                //failed adding user details
+                Toast.makeText(
+                    this, e.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 }
 
