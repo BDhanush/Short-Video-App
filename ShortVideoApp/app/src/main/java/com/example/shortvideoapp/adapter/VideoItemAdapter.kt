@@ -2,6 +2,7 @@ package com.example.shortvideoapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -50,6 +51,11 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                 seekBar.max = videoView.duration
                 seekBar.postDelayed(update, 1)
             }
+            videoView.setOnErrorListener(MediaPlayer.OnErrorListener{
+                mp, what, extra ->
+                Toast.makeText(context, "Can't play video, try again later", Toast.LENGTH_LONG).show()
+                true
+            })
              val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                     if (videoView.isPlaying) {

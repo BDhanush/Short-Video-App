@@ -103,13 +103,15 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="5dp" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profilePicture"
             android:background="@drawable/image"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="16dp"
             android:layout_marginBottom="10dp"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+
             app:layout_constraintBottom_toTopOf="@id/seekbar"
             app:layout_constraintLeft_toLeftOf="parent"
             />
