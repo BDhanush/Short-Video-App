@@ -128,9 +128,9 @@ class AddVideoActivity : AppCompatActivity() {
                 videoName = "compressed_video"
             ),
             configureWith = Configuration(
-                quality = VideoQuality.MEDIUM,
+                quality = VideoQuality.LOW,
                 isMinBitrateCheckEnabled = true,
-                videoBitrateInMbps = 5,
+                //videoBitrateInMbps = 5,
                 disableAudio = false,
                 keepOriginalResolution = true
 //                videoWidth = 360.0,
@@ -189,6 +189,14 @@ class AddVideoActivity : AppCompatActivity() {
                                         //failed adding video details
                                         progressDialog.dismiss()
                                         Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+
+                                        // Delete the compressed video from local storage
+                                        val compressedVideoFile = path?.let { File(it) }
+                                        if (compressedVideoFile != null) {
+                                            if (compressedVideoFile.exists()) {
+                                                compressedVideoFile.delete()
+                                            }
+                                        }
                                     }
 
                             }
@@ -197,6 +205,14 @@ class AddVideoActivity : AppCompatActivity() {
                             //failed uploading
                             progressDialog.dismiss()
                             Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+
+                            // Delete the compressed video from local storage
+                            val compressedVideoFile = path?.let { File(it) }
+                            if (compressedVideoFile != null) {
+                                if (compressedVideoFile.exists()) {
+                                    compressedVideoFile.delete()
+                                }
+                            }
                         }
                 }
 
