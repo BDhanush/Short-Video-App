@@ -8,7 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -29,12 +33,22 @@ class SignupActivity : AppCompatActivity() {
             signup()
         }
     }
-    private fun signup()
-    {
-        val email:EditText=findViewById(R.id.emailInput)
-        val password:EditText=findViewById(R.id.passwordInput)
+    private fun signup() {
+        val email:EditText = findViewById(R.id.emailInput)
+        val password:EditText = findViewById(R.id.passwordInput)
+        val confirmPassword:EditText = findViewById(R.id.confirmPasswordInput)
+        val username:EditText = findViewById(R.id.usernameInput)
 
         auth = Firebase.auth
+
+        if (password.text.toString() != confirmPassword.text.toString()) {
+            Toast.makeText(
+                this, "Passwords do not match.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         auth.createUserWithEmailAndPassword(email.text.toString(),password.text.toString()).addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
