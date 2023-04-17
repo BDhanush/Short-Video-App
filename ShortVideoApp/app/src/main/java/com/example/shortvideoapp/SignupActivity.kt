@@ -39,6 +39,7 @@ class SignupActivity : AppCompatActivity() {
     {
         val email:EditText=findViewById(R.id.emailInput)
         val password:EditText=findViewById(R.id.passwordInput)
+        val confirmPassword:EditText=findViewById(R.id.confirmPasswordInput)
         val username:EditText=findViewById(R.id.usernameInput)
 
         auth = Firebase.auth
