@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
 import com.facebook.shimmer.ShimmerFrameLayout
-import java.text.FieldPosition
-
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
@@ -34,7 +32,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
 
             videoView.setOnPreparedListener{ mp ->
 
-                shimmerLoading.visibilty= GONE
+                shimmerLoading.visibility= GONE
                 loadedVideo.visibility= VISIBLE
 
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
