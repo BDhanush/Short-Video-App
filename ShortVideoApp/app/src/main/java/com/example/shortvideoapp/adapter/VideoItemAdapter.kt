@@ -34,7 +34,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
 
             videoView.setOnPreparedListener{ mp ->
 
-                shimmerLoading.visibilty= GONE
+                shimmerLoading.visibility= GONE
                 loadedVideo.visibility= VISIBLE
 
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
