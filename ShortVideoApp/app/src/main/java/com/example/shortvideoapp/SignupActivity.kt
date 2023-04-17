@@ -41,7 +41,6 @@ class SignupActivity : AppCompatActivity() {
         val password:EditText=findViewById(R.id.passwordInput)
         val username:EditText=findViewById(R.id.usernameInput)
 
-
         auth = Firebase.auth
         database = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
 
@@ -61,7 +60,7 @@ class SignupActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                writeNewUser("",username.text.toString(),"","",email.text.toString());
+                writeNewUser(auth.currentUser!!.uid,username.text.toString(),"","",email.text.toString());
 
                 finish()
 
@@ -74,9 +73,8 @@ class SignupActivity : AppCompatActivity() {
         }
     }
     fun writeNewUser(uid:String,username:String,firstName:String,lastName:String,email:String) {
-
         val user = User(uid,username,firstName,lastName,email);
-        database.child("users").child(auth.currentUser!!.uid).setValue(user)
+        database.child("users").child(uid).setValue(user)
     }
 }
 
