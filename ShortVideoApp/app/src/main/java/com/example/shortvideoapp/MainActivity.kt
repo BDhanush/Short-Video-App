@@ -8,7 +8,6 @@ import android.widget.VideoView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
 import com.example.shortvideoapp.model.Video
-import com.facebook.shimmer.ShimmerFrameLayout
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
-
 
         val videosURlList= mutableListOf<Video>()
         videosURlList.add(Video("https://cdn.discordapp.com/attachments/910134893151911946/1056972395543527474/iam-like-what-he-say-fuck-me-for-50-cent-talking-about-floyd-mayweather-reaction-video-meme-vidownload.mp4"));
