@@ -2,6 +2,7 @@ package com.example.shortvideoapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
 import com.facebook.shimmer.ShimmerFrameLayout
+import java.text.FieldPosition
 
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
@@ -32,7 +34,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
 
             videoView.setOnPreparedListener{ mp ->
 
-                shimmerLoading.visibility= GONE
+                shimmerLoading.visibilty= GONE
                 loadedVideo.visibility= VISIBLE
 
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
@@ -50,6 +52,11 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                 seekBar.max = videoView.duration
                 seekBar.postDelayed(update, 1)
             }
+            videoView.setOnErrorListener(MediaPlayer.OnErrorListener{
+                mp, what, extra ->
+                Toast.makeText(context, "Can't play video, try again later", Toast.LENGTH_LONG).show()
+                true
+            })
              val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                     if (videoView.isPlaying) {
@@ -71,7 +78,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
                     fromUser: Boolean
                 ) {
                     if (fromUser) {
-                        // this is when actually seekbar has been seeked to a new position
+                        // this is when actually seekbar has been sought to a new position
                         videoView.seekTo(progress)
                     }
                 }
@@ -92,9 +99,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
 
         holder.videoView.setVideoPath(item.videoURL)
     }
-
     /**
      * Return the size of your dataset (invoked by the layout manager)
-     */
-    override fun getItemCount() = dataset.size
+     */ override fun getItemCount() = dataset.size
 }
