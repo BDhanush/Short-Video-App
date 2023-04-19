@@ -3,19 +3,16 @@ package com.example.shortvideoapp.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
-import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
-import com.example.shortvideoapp.model.Video
+import com.example.shortvideoapp.model.Post
 import com.facebook.shimmer.ShimmerFrameLayout
-import java.text.FieldPosition
 
-
-class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -34,7 +31,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
 
             videoView.setOnPreparedListener{ mp ->
 
-                shimmerLoading.visibilty= GONE
+                shimmerLoading.visibility= GONE
                 loadedVideo.visibility= VISIBLE
 
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
