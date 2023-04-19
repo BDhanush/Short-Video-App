@@ -1,73 +1,87 @@
-<!-- res/layout/profile_page_layout.xml -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <!-- Profile image -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profileImage"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@drawable/profile_image"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="32dp"
-        android:layout_centerHorizontal="true" />
+
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <!-- Profile name -->
+
+    <!-- Profile bio -->
+
+    <!-- Profile stats: followers, following, posts -->
     <TextView
         android:id="@+id/profileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/profileImage"
+        android:layout_centerHorizontal="true"
         android:text="Bommi"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_below="@+id/profileImage"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/profileImage"
+        tools:layout_editor_absoluteX="167dp" />
 
-    <!-- Profile bio -->
     <TextView
         android:id="@+id/profileBio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Peepee Poopoo"
-        android:textSize="16sp"
         android:layout_below="@+id/profileName"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp" />
+        android:text="Peepee Poopoo"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
-    <!-- Profile stats: followers, following, posts -->
     <LinearLayout
         android:id="@+id/profileStats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_below="@+id/profileBio"
+        android:gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:gravity="center_horizontal">
+
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/profileBio">
 
         <TextView
             android:id="@+id/textFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
             android:text="Followers: 100"
-            android:textSize="14sp"
-            android:layout_marginRight="16dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textFollowing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
             android:text="Following: 50"
-            android:textSize="14sp"
-            android:layout_marginRight="16dp" />
+
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textPosts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Posts: 200"
+
             android:textSize="14sp" />
 
     </LinearLayout>
@@ -77,38 +91,37 @@
         android:id="@+id/btnEditProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Profile"
         android:layout_below="@+id/profileStats"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:text="Edit Profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileStats"
+        android:layout_marginTop="16dp"
+        />
 
-    <!-- ViewPager -->
-    <!-- ViewPager -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/btnEditProfile"
-
-        android:layout_above="@+id/tabLayout"
-        app:layout_constraintTop_toBottomOf="@+id/btnEditProfile"
+        android:background="@android:color/holo_green_light"
         app:layout_constraintBottom_toTopOf="@id/tabLayout"
-        app:layout_constraintHeight_percent="1"
-        android:background="@android:color/holo_green_light"        />
+        app:layout_constraintTop_toBottomOf="@+id/btnEditProfile" />
 
-    <!-- TabLayout -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        app:tabMode="fixed"
-        app:tabIndicatorGravity="stretch"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:tabIndicatorAnimationMode="elastic"
-        app:tabSelectedTextColor="@color/white"
         app:tabIndicatorColor="@null"
-        app:tabIndicator="@drawable/tab_indicator"
-        android:background="#000000">
-    />
 
-</RelativeLayout>
+        app:tabIndicatorGravity="stretch"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
