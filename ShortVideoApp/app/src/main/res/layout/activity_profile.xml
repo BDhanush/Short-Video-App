@@ -113,20 +113,22 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:tabIndicatorAnimationMode="elastic"
-        app:tabIndicatorColor="@null"
-        app:tabIndicatorGravity="stretch"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/white"
         app:tabPaddingStart="16dp"
         app:tabPaddingEnd="16dp">
-
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="test"
+            />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="test1"
+            />
 
     </com.google.android.material.tabs.TabLayout>
 
