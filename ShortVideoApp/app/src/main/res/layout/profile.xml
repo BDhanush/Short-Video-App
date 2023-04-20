@@ -116,6 +116,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
+        android:contentDescription="Tabs for navigating between screens"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -126,8 +127,6 @@
         app:tabSelectedTextColor="@color/white"
         app:tabPaddingStart="16dp"
         app:tabPaddingEnd="16dp">
-
-
 
     </com.google.android.material.tabs.TabLayout>
 
