@@ -31,6 +31,10 @@
             android:name=".SignupActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".ProfilepageActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait">

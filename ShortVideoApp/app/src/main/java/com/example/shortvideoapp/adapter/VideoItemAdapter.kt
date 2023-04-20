@@ -2,13 +2,17 @@ package com.example.shortvideoapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.shortvideoapp.ProfilepageActivity
 import com.example.shortvideoapp.R
+import com.example.shortvideoapp.SignupActivity
 import com.example.shortvideoapp.model.Post
 import com.facebook.shimmer.ShimmerFrameLayout
 
@@ -20,6 +24,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val seekBar:SeekBar = view.findViewById(R.id.seekbar)
         private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
         private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
+        val profileButton:Button = view.findViewById(R.id.homeButton)
+
         init{
 
             val update: Runnable = object : Runnable {
@@ -49,11 +55,17 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                 seekBar.max = videoView.duration
                 seekBar.postDelayed(update, 1)
             }
-            videoView.setOnErrorListener(MediaPlayer.OnErrorListener{
-                mp, what, extra ->
-                Toast.makeText(context, "Can't play video, try again later", Toast.LENGTH_LONG).show()
-                true
-            })
+            profileButton.setOnClickListener{
+//                Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
+                Intent(context, ProfilepageActivity::class.java).also{
+                    context.startActivity(it)
+                }
+            }
+//            videoView.setOnErrorListener(MediaPlayer.OnErrorListener{
+//                mp, what, extra ->
+//                Toast.makeText(context, "Can't play video, try again later", Toast.LENGTH_LONG).show()
+//                true
+//            })
              val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                     if (videoView.isPlaying) {
