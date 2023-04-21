@@ -14,16 +14,15 @@ class ProfilepageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        val tabs:MutableList<Fragment> = mutableListOf(GridFragment(),AboutFragment());
-        val tabsText:MutableList<String> = mutableListOf("Posts","About");
+        val tabs:MutableList<Pair<String,Fragment>> = mutableListOf(Pair("Posts",GridFragment()),Pair("About",AboutFragment()))
 
         val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
-        val tabsAdapter=ProfileTabAdapter(this)
+        val tabsAdapter=ProfileTabAdapter(this,tabs)
         val tabLayout: TabLayout= findViewById(R.id.tabLayout)
         tabsViewPager.adapter=tabsAdapter
 
         TabLayoutMediator(tabLayout,tabsViewPager) {tab,position->
-            tab.text=tabsText[position]
+            tab.text=tabs[position].first
         }.attach()
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
