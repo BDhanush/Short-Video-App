@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/shimmerVideo">
-        <include layout="@layout/activity_shimmerloading"/>
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
@@ -184,4 +177,12 @@
             app:layout_constraintTop_toTopOf="@id/profilePicture"
             tools:text="creatorName" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/shimmerVideo"
+        android:visibility="visible"
+        >
+        <include layout="@layout/activity_shimmerloading"/>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

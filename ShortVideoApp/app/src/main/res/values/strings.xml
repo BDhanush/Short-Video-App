@@ -9,4 +9,6 @@
     <string name="email">Email</string>
     <string name="have_an_account">Already have an account? Login</string>
     <string name="no_account">Don\'t have an account? Signup</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
