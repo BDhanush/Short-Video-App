@@ -12,7 +12,7 @@ class ProfilepageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        setContentView(R.layout.test)
 
         val tabs:MutableList<Pair<String,Fragment>> = mutableListOf(Pair("Posts",GridFragment()),Pair("About",AboutFragment()))
 
