@@ -6,8 +6,9 @@ import com.google.firebase.database.*
 data class Post(val videoURL:String,val uid:String,val title:String,val description:String,val upvotes:Int,val downvotes:Int)
 {
     var username:String?=null;
-    val comments:MutableList<String> = mutableListOf();
+    var comments:MutableList<String> = mutableListOf();
     init {
+        //get username from database
         val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(uid).child("username");
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -20,5 +21,7 @@ data class Post(val videoURL:String,val uid:String,val title:String,val descript
             }
         }
         databaseUsername.addValueEventListener(postListener)
+
+
     }
 }
