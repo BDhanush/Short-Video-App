@@ -1,24 +1,82 @@
 package com.example.shortvideoapp.adapter
 
-import android.os.Bundle
+import android.annotation.SuppressLint
 import android.content.Context
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.MediaController
-import android.widget.TextView
-import android.widget.VideoView
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
+import android.view.*
+import android.widget.*
+import android.widget.SeekBar.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Video
+import com.facebook.shimmer.ShimmerFrameLayout
+
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Video>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
-    class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    @SuppressLint("ClickableViewAccessibility")
+    inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
+        val seekBar:SeekBar = view.findViewById(R.id.seekbar)
+        private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
+        private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
+        init{
+
+            val update: Runnable = object : Runnable {
+                override fun run() {
+                    seekBar.progress = videoView.currentPosition
+                    seekBar.postDelayed(this, 1)
+                }
+            }
+
+            videoView.setOnPreparedListener{ mp ->
+
+                shimmerLoading.visibility= GONE
+                loadedVideo.visibility= VISIBLE
+
+                val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
+                val screenRatio = videoView.width / videoView.height.toFloat()
+                val scaleX = videoRatio / screenRatio
+                if (scaleX >= 1f) {
+                    videoView.scaleX = scaleX
+                } else {
+                    videoView.scaleY = 1f / scaleX
+                }
+                mp.start()
+                mp.isLooping = true
+
+
+                seekBar.max = videoView.duration
+                seekBar.postDelayed(update, 1)
+            }
+             val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    if (videoView.isPlaying) {
+                        videoView.pause()
+                    } else {
+                        videoView.start()
+                    }
+                    return super.onSingleTapConfirmed(e)
+                }
+            })
+            videoView.setOnTouchListener { _, event -> videoGestureDetector.onTouchEvent(event) }
+
+
+            seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                override fun onStartTrackingTouch(seekBar: SeekBar) {}
+                override fun onProgressChanged(
+                    seekBar: SeekBar, progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        // this is when actually seekbar has been seeked to a new position
+                        videoView.seekTo(progress)
+                    }
+                }
+            })
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -33,18 +91,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Vid
         val item = dataset[position]
 
         holder.videoView.setVideoPath(item.videoURL)
-        holder.videoView.setOnPreparedListener{ mp ->
-            val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
-            val screenRatio = holder.videoView.width / holder.videoView.height.toFloat()
-            val scaleX = videoRatio / screenRatio
-            if (scaleX >= 1f) {
-                holder.videoView.scaleX = scaleX
-            } else {
-                holder.videoView.scaleY = 1f / scaleX
-            }
-            mp.start()
-            mp.isLooping = true
-        }
     }
 
     /**
