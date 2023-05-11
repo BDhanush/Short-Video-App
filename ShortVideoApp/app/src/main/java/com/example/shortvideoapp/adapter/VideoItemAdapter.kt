@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
@@ -15,6 +16,8 @@ import com.example.shortvideoapp.R
 import com.example.shortvideoapp.SignupActivity
 import com.example.shortvideoapp.model.Post
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.firebase.database.*
+import org.w3c.dom.Text
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
@@ -25,9 +28,14 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
         private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
         val profileButton:Button = view.findViewById(R.id.homeButton)
-
+        val videoTitle:TextView=view.findViewById(R.id.title)
+        val videoDescription:TextView=view.findViewById(R.id.description)
+        val username:TextView=view.findViewById(R.id.creatorName)
+        val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
         init{
-
+            videoTitle.setOnClickListener {
+                videoDescription.visibility= if(videoDescription.visibility == INVISIBLE) VISIBLE else INVISIBLE
+            }
             val update: Runnable = object : Runnable {
                 override fun run() {
                     seekBar.progress = videoView.currentPosition
@@ -105,10 +113,48 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
-
+        holder.videoTitle.text=item.title
         holder.videoView.setVideoPath(item.videoURL)
+        holder.videoDescription.text = item.description
+//        holder.username.text= getUsername(item.uid);
+//        holder.profilePicture.setImageURI(Uri.parse(getProfilePicture(item.uid)));
+
     }
     /**
      * Return the size of your dataset (invoked by the layout manager)
      */ override fun getItemCount() = dataset.size
+}
+
+fun getUsername(uid:String):String{
+    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(uid).child("username");
+    var username:String?=null;
+    val postListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            username = dataSnapshot.value as String;
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            // Getting Post failed, log a message
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+        }
+    }
+    databaseUsername.addValueEventListener(postListener)
+    return username!!
+}
+
+fun getProfilePicture(uid:String):String{
+    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(uid).child("profilePicture");
+    var profilePicture:String?=null;
+    val postListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            profilePicture = dataSnapshot.value as String;
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            // Getting Post failed, log a message
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+        }
+    }
+    databaseUsername.addValueEventListener(postListener)
+    return profilePicture!!
 }
