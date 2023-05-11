@@ -21,6 +21,8 @@ import org.w3c.dom.Text
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
+    private val database: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
@@ -32,10 +34,12 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val videoDescription:TextView=view.findViewById(R.id.description)
         val username:TextView=view.findViewById(R.id.creatorName)
         val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
+        val saveButton:CheckBox=view.findViewById(R.id.saveButton)
         init{
             videoTitle.setOnClickListener {
                 videoDescription.visibility= if(videoDescription.visibility == INVISIBLE) VISIBLE else INVISIBLE
             }
+
             val update: Runnable = object : Runnable {
                 override fun run() {
                     seekBar.progress = videoView.currentPosition
@@ -100,7 +104,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                     }
                 }
             })
+
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -116,6 +122,14 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.videoTitle.text=item.title
         holder.videoView.setVideoPath(item.videoURL)
         holder.videoDescription.text = item.description
+        holder.saveButton.setOnClickListener {
+//            if(holder.saveButton.isChecked)
+//            {
+//                database.child("users").child("saved").push(item.postURL)
+//            }else{
+//
+//            }
+        }
 //        holder.username.text= getUsername(item.uid);
 //        holder.profilePicture.setImageURI(Uri.parse(getProfilePicture(item.uid)));
 
