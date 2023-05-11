@@ -25,7 +25,7 @@ class ProfilePageActivity(val user: User) : AppCompatActivity() {
         val tabs:MutableList<Pair<String,Fragment>> = mutableListOf()
         val button:LinearLayout = findViewById(R.id.buttons)
         val buttonOther:LinearLayout = findViewById(R.id.buttonsOther)
-        pageBasedOnContext(user.uid,tabs,button,buttonOther)
+        pageBasedOnContext(auth.currentUser!!.uid,tabs,button,buttonOther)
 
         val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
         val tabsAdapter=ProfileTabAdapter(this,tabs)
