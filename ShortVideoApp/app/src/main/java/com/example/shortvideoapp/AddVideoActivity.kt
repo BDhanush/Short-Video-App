@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.MediaController
@@ -35,10 +36,6 @@ import java.net.URI
 
 /*add a new video*/
 class AddVideoActivity : AppCompatActivity() {
-
-    //actionBar
-    private lateinit var actionBar: ActionBar
-
     //constants to pick video
     private val VIDEO_PICK_GALLERY_CODE = 100
     private val VIDEO_PICK_CAMERA_CODE = 101
@@ -58,14 +55,6 @@ class AddVideoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_video)
-
-        //init actionBar
-        actionBar = supportActionBar!!
-        //title
-        actionBar.title = "Add New Video"
-        //add back button
-        actionBar.setDisplayHomeAsUpEnabled(true)
-        actionBar.setDisplayShowHomeEnabled(true)
 
         //init camera permission array
         cameraPermissions = arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
