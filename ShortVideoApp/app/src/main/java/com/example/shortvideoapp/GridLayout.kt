@@ -31,7 +31,7 @@ class GridLayout : Fragment() {
     class GridFragment : Fragment() {
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            return inflater.inflate(R.layout.fragment_grid, container, false)
+            return inflater.inflate(R.layout.fragment_grid_layout, container, false)
         }
     }
 

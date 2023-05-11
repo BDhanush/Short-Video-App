@@ -16,21 +16,6 @@
 
 
 <!--    </com.google.android.exoplayer2.ui.StyledPlayerView>-->
-    <VideoView
-        android:id="@+id/videoView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/shimmerVideo">
-        <include layout="@layout/activity_shimmerloading"/>
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"

@@ -10,13 +10,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.ProfileTabAdapter
 import com.example.shortvideoapp.adapter.pageBasedOnContext
 import com.example.shortvideoapp.model.User
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class ProfilepageActivity(val user: User) : AppCompatActivity() {
+class ProfilePageActivity(val user: User) : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

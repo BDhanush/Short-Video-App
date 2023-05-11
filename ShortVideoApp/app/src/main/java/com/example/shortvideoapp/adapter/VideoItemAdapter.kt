@@ -12,10 +12,12 @@ import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shortvideoapp.ProfilepageActivity
+import com.example.shortvideoapp.ProfilePage
+import com.example.shortvideoapp.ProfilePageActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.SignupActivity
 import com.example.shortvideoapp.model.Post
+import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.database.*
 import org.w3c.dom.Text
@@ -65,8 +67,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                 seekBar.postDelayed(update, 1)
             }
             profileButton.setOnClickListener{
-//                Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
-                Intent(context, ProfilepageActivity::class.java).also{
+//              Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
+                Intent(context, ProfilePage::class.java).also{
                     context.startActivity(it)
                 }
             }
