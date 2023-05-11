@@ -77,7 +77,7 @@
 
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/save_24"
+            android:background="@drawable/selector_save"
             app:layout_constraintBottom_toTopOf="@id/homeButton"
             app:layout_constraintEnd_toEndOf="parent"
 
@@ -124,13 +124,15 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="5dp" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profilePicture"
             android:background="@drawable/image"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="16dp"
             android:layout_marginBottom="10dp"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+
             app:layout_constraintBottom_toTopOf="@id/seekbar"
             app:layout_constraintLeft_toLeftOf="parent"
             />
@@ -169,7 +171,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/moreButton"
 
-
+            android:clickable="true"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textSize="25dp"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"/>
@@ -180,7 +183,8 @@
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
             android:textSize="16dp"
-            android:visibility="visible"
+            android:visibility="invisible"
+
             app:layout_constraintBottom_toTopOf="@id/creatorName"
             app:layout_constraintLeft_toLeftOf="@id/title"
             app:layout_constraintRight_toLeftOf="@id/homeButton"
@@ -203,4 +207,12 @@
             app:layout_constraintTop_toTopOf="@id/profilePicture"
             tools:text="creatorName" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/shimmerVideo"
+        android:visibility="visible"
+        >
+        <include layout="@layout/activity_shimmerloading"/>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

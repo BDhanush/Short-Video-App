@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -35,14 +36,13 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-
                         Toast.makeText(
                             this, "signInWithEmail:success",
                             Toast.LENGTH_SHORT
                         ).show()
                         val user = auth.currentUser
                         finish()
-                        Intent(this,MainActivity::class.java).also{
+                        Intent(this,MainActivity::class.java).also {
                             startActivity(it)
                         }
                     } else {
@@ -66,9 +66,8 @@ class LoginActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if(currentUser != null){
-
-            Intent(this,UploadActivity::class.java).also{
-
+            Intent(this,MainActivity::class.java).also{
+                finish()
                 startActivity(it)
             }
         }

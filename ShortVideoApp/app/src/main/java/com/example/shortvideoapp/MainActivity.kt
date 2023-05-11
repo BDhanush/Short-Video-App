@@ -9,6 +9,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.example.shortvideoapp.model.Post
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun playVideosFromFirebase() {
         val videos: MutableList<Video> = mutableListOf()
+        var auth: FirebaseAuth = Firebase.auth
+
         val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
         val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
         dbReference.addValueEventListener(object : ValueEventListener {
@@ -40,5 +46,4 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
 }
