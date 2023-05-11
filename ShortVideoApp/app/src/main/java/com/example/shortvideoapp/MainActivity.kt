@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
-import com.example.shortvideoapp.model.Video
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playVideosFromFirebase() {
-        val videos: MutableList<Video> = mutableListOf()
+        val videos: MutableList<Post> = mutableListOf()
         var auth: FirebaseAuth = Firebase.auth
 
         val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     val title = snapshot.child("title").value.toString()
                     val timestamp = snapshot.child("timestamp").value.toString()
                     val videoUri = snapshot.child("videoUri").value.toString()
-                    val video = Video(videoUri)
+                    val video = Post(videoUri, auth.currentUser!!.uid,"test","test",0,0)
                     videos.add(video)
                 }
                 videosViewPager.adapter = VideoItemAdapter(this@MainActivity, videos)

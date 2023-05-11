@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
-import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import android.view.*
 import android.widget.*
