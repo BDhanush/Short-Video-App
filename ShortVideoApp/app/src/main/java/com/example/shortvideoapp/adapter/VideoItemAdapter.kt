@@ -4,23 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
-import android.net.Uri
-import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.danikula.videocache.HttpProxyCacheServer
 import com.example.shortvideoapp.ProfilePage
-import com.example.shortvideoapp.ProfilePageActivity
 import com.example.shortvideoapp.R
-import com.example.shortvideoapp.SignupActivity
 import com.example.shortvideoapp.model.Post
-import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.database.*
-import org.w3c.dom.Text
+
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
@@ -30,6 +25,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
         val seekBar:SeekBar = view.findViewById(R.id.seekbar)
+        private val mediaPlayer: MediaPlayer = MediaPlayer()
         private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
         private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
         val profileButton:Button = view.findViewById(R.id.homeButton)
@@ -109,6 +105,22 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             })
 
         }
+        fun preloadVideos(videoUrls: List<String>) {
+            for (videoUrl in videoUrls) {
+                mediaPlayer.apply {
+                    reset()
+                    val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
+                    val proxyUrl = proxy.getProxyUrl(videoUrl)
+                    setDataSource(proxyUrl)
+                    prepareAsync()
+                    setOnPreparedListener { mp ->
+                        // Video is preloaded and ready to play
+                        mp.isLooping = true
+                        mp.seekTo(0)
+                    }
+                }
+            }
+        }
 
     }
 
@@ -120,11 +132,35 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         return ItemViewHolder(adapterLayout)
     }
 
+    object ProxyFactory {
+        private var sharedProxy: HttpProxyCacheServer? = null
+        fun getProxy(context: Context): HttpProxyCacheServer {
+            return if (sharedProxy == null) newProxy(context).also {
+                sharedProxy = it
+            } else sharedProxy!!
+        }
+
+        private fun newProxy(context: Context): HttpProxyCacheServer {
+            return HttpProxyCacheServer(context)
+        }
+    }
+
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
         holder.videoTitle.text=item.title
-        holder.videoView.setVideoPath(item.videoURL)
+        val context = holder.itemView.context
         holder.videoDescription.text = item.description
+
+        val PRELOAD_VIDEO_COUNT = 3;
+        val nextVideos = dataset.subList(position + 1, minOf(position + 1 + PRELOAD_VIDEO_COUNT, dataset.size))
+        val nextVideoUrls = nextVideos.map { it.videoURL }
+        holder.preloadVideos(nextVideoUrls)
+
+        // Set the video path for VideoView
+        val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
+        val proxyUrl = proxy.getProxyUrl(item.videoURL)
+        holder.videoView.setVideoPath(proxyUrl)
+
         holder.saveButton.setOnClickListener {
 //            if(holder.saveButton.isChecked)
 //            {
