@@ -3,6 +3,11 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        jcenter() {
+            content {
+                includeModule("com.danikula", "videocache")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -11,6 +16,11 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        jcenter() {
+            content {
+                includeModule("com.danikula", "videocache")
+            }
+        }
     }
 }
 rootProject.name = "ShortVideoApp"
