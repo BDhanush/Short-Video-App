@@ -117,7 +117,7 @@ class AddVideoActivity : AppCompatActivity() {
             ),
             configureWith = Configuration(
                 quality = VideoQuality.LOW,
-                isMinBitrateCheckEnabled = true,
+                isMinBitrateCheckEnabled = false,
                 //videoBitrateInMbps = 5,
                 disableAudio = false,
                 keepOriginalResolution = true
