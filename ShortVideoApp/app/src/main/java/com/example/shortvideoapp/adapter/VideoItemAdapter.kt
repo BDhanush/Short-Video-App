@@ -109,9 +109,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             for (videoUrl in videoUrls) {
                 mediaPlayer.apply {
                     reset()
-                    //val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
-                    //val proxyUrl = proxy.getProxyUrl(videoUrl)
-                    setDataSource(videoUrl)
+                    val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
+                    val proxyUrl = proxy.getProxyUrl(videoUrl)
+                    setDataSource(proxyUrl)
                     prepareAsync()
                     setOnPreparedListener { mp ->
                         // Video is preloaded and ready to play
@@ -157,9 +157,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.preloadVideos(nextVideoUrls)
 
         // Set the video path for VideoView
-        //val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
-        //val proxyUrl = proxy.getProxyUrl(item.videoURL)
-        holder.videoView.setVideoPath(item.videoURL)
+        val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
+        val proxyUrl = proxy.getProxyUrl(item.videoURL)
+        holder.videoView.setVideoPath(proxyUrl)
 
         holder.saveButton.setOnClickListener {
 //            if(holder.saveButton.isChecked)
