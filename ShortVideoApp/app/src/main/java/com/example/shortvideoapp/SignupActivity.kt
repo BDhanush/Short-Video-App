@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -42,7 +43,7 @@ class SignupActivity : AppCompatActivity() {
         val username:EditText=findViewById(R.id.usernameInput)
 
         auth = Firebase.auth
-        database = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+        database = FirebaseDatabase.getInstance(databaseURL).reference
 
         if (password.text.toString() != confirmPassword.text.toString()) {
             Toast.makeText(

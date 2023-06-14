@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.ProfilepageActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.SignupActivity
+import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.database.*
@@ -126,7 +127,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 }
 
 fun getUsername(uid:String):String{
-    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(uid).child("username");
+    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance(databaseURL).reference.child("users").child(uid).child("username");
     var username:String?=null;
     val postListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -143,7 +144,7 @@ fun getUsername(uid:String):String{
 }
 
 fun getProfilePicture(uid:String):String{
-    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(uid).child("profilePicture");
+    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance(databaseURL).reference.child("users").child(uid).child("profilePicture");
     var profilePicture:String?=null;
     val postListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
