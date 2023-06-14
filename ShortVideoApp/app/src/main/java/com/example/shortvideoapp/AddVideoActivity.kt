@@ -8,14 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.view.Window
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.MediaController
-import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.VideoView
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,12 +25,13 @@ import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation
 import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration
 import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.simform.videooperations.CallBackOfQuery
+import com.simform.videooperations.FFmpegCallBack
+import com.simform.videooperations.LogMessage
+import com.simform.videooperations.Statistics
 import java.io.File
-import java.net.URI
 
 /*add a new video*/
 class AddVideoActivity : AppCompatActivity() {
@@ -117,7 +116,7 @@ class AddVideoActivity : AppCompatActivity() {
             ),
             configureWith = Configuration(
                 quality = VideoQuality.LOW,
-                isMinBitrateCheckEnabled = false,
+                isMinBitrateCheckEnabled = true,
                 //videoBitrateInMbps = 5,
                 disableAudio = false,
                 keepOriginalResolution = true
@@ -139,69 +138,107 @@ class AddVideoActivity : AppCompatActivity() {
 
                 override fun onSuccess(index: Int, size: Long, path: String?) {
                     // On Compression success
-                    //upload compressed video to firebase
-                    val compressedVideoUri = Uri.fromFile(path?.let { File(it) })
-                    storageReference.putFile(compressedVideoUri)
-                        .addOnSuccessListener { taskSnapshot ->
-                            //get url of uploaded video
-                            val uriTask: Task<Uri> = taskSnapshot.storage.downloadUrl
-                            while (!uriTask.isSuccessful);
-                            val downloadUrl = uriTask.result
-                            if (uriTask.isSuccessful) {
-                                //video url is received successfully
-
-                                //video details
-                                val hashMap = HashMap<String, Any>()
-                                hashMap["id"] = timestamp
-                                hashMap["title"] = title
-                                hashMap["timestamp"] = timestamp
-                                hashMap["videoUri"] = "$downloadUrl"
-
-                                //put details into Database
-                                val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
-                                dbReference.child(timestamp).setValue(hashMap)
-                                    .addOnSuccessListener { taskSnapshot ->
-                                        //video details added successfully
-                                        progressDialog.dismiss()
-                                        Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
-
-                                        // Delete the compressed video from local storage
-                                        val compressedVideoFile = path?.let { File(it) }
-                                        if (compressedVideoFile != null) {
-                                            if (compressedVideoFile.exists()) {
-                                                compressedVideoFile.delete()
-                                            }
-                                        }
-                                    }
-                                    .addOnFailureListener { e ->
-                                        //failed adding video details
-                                        progressDialog.dismiss()
-                                        Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
-
-                                        // Delete the compressed video from local storage
-                                        val compressedVideoFile = path?.let { File(it) }
-                                        if (compressedVideoFile != null) {
-                                            if (compressedVideoFile.exists()) {
-                                                compressedVideoFile.delete()
-                                            }
-                                        }
-                                    }
-
-                            }
+                    val outputDir = cacheDir.absolutePath
+                    val query:Array<String> = arrayOf(
+                        "-i", path!!,
+                        "-codec:", "copy",
+                        "-start_number", "0",
+                        "-hls_time", "10",
+                        "-hls_list_size", "0",
+                        "-f", "hls",
+                        outputDir+"/compressed_video.m3u8"
+                    )
+                    CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
+                        override fun statisticsProcess(statistics: Statistics) {
+                            Log.i("FFMPEG LOG : ", statistics.videoFrameNumber.toString())
                         }
-                        .addOnFailureListener { e ->
-                            //failed uploading
-                            progressDialog.dismiss()
-                            Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
 
-                            // Delete the compressed video from local storage
-                            val compressedVideoFile = path?.let { File(it) }
-                            if (compressedVideoFile != null) {
-                                if (compressedVideoFile.exists()) {
-                                    compressedVideoFile.delete()
+                        override fun process(logMessage: LogMessage) {
+                            Log.i("FFMPEG LOG : ", logMessage.text)
+                        }
+
+                        override fun success() {
+                            //upload compressed video to firebase
+                            val compressedVideoUri = Uri.fromFile(File(outputDir+"/compressed_video.m3u8"))
+                            storageReference.putFile(compressedVideoUri)
+                                .addOnSuccessListener { taskSnapshot ->
+                                    //get url of uploaded video
+                                    val uriTask: Task<Uri> = taskSnapshot.storage.downloadUrl
+                                    while (!uriTask.isSuccessful);
+                                    val downloadUrl = uriTask.result
+                                    if (uriTask.isSuccessful) {
+                                        //video url is received successfully
+
+                                        //video details
+                                        val hashMap = HashMap<String, Any>()
+                                        hashMap["id"] = timestamp
+                                        hashMap["title"] = title
+                                        hashMap["timestamp"] = timestamp
+                                        hashMap["videoUri"] = "$downloadUrl"
+
+                                        //put details into Database
+                                        val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
+                                        dbReference.child(timestamp).setValue(hashMap)
+                                            .addOnSuccessListener { taskSnapshot ->
+                                                //video details added successfully
+                                                progressDialog.dismiss()
+                                                Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
+
+                                                // Delete the compressed video from local storage
+                                                val compressedVideoFile = path?.let { File(it) }
+                                                if (compressedVideoFile != null) {
+                                                    if (compressedVideoFile.exists()) {
+                                                        compressedVideoFile.delete()
+                                                    }
+                                                }
+                                            }
+                                            .addOnFailureListener { e ->
+                                                //failed adding video details
+                                                progressDialog.dismiss()
+                                                Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+
+                                                // Delete the compressed video from local storage
+                                                val compressedVideoFile = path?.let { File(it) }
+                                                if (compressedVideoFile != null) {
+                                                    if (compressedVideoFile.exists()) {
+                                                        compressedVideoFile.delete()
+                                                    }
+                                                }
+                                            }
+
+                                    }
                                 }
+                                .addOnFailureListener { e ->
+                                    //failed uploading
+                                    progressDialog.dismiss()
+                                    Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+
+                                    // Delete the compressed video from local storage
+                                    val compressedVideoFile = path?.let { File(it) }
+                                    if (compressedVideoFile != null) {
+                                        if (compressedVideoFile.exists()) {
+                                            compressedVideoFile.delete()
+                                        }
+                                    }
+                                }
+                        }
+
+                        override fun cancel() {
+                            // Delete the compressed video from local storage
+                            val compressedVideoFile = File(path)
+                            if (compressedVideoFile.exists()) {
+                                compressedVideoFile.delete()
                             }
                         }
+
+                        override fun failed() {
+                            // Delete the compressed video from local storage
+                            val compressedVideoFile = File(path)
+                            if (compressedVideoFile.exists()) {
+                                compressedVideoFile.delete()
+                            }
+                        }
+                    })
                 }
 
                 override fun onFailure(index: Int, failureMessage: String) {

@@ -3,7 +3,7 @@ package com.example.shortvideoapp.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.media.MediaPlayer
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
@@ -14,105 +14,81 @@ import com.example.shortvideoapp.ProfilePage
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Post
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.firebase.database.*
 
 
-class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>, var videoPreparedListener: OnVideoPreparedListener): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     private val database: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
 
     @SuppressLint("ClickableViewAccessibility")
-    inner class ItemViewHolder(private val view: View, var videoPreparedListener: OnVideoPreparedListener) : RecyclerView.ViewHolder(view) {
-        val playerView: PlayerView = view.findViewById(R.id.playerView)
-        val seekBar: SeekBar = view.findViewById(R.id.seekbar)
-        val loadControl = DefaultLoadControl.Builder()
-            .setBufferDurationsMs(
-                15000,
-                60000,
-                2500,
-               5000
-            )
-            .build()
-        val exoPlayer: ExoPlayer = ExoPlayer.Builder(context).setLoadControl(loadControl).build()
+    inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+        val videoView: VideoView = view.findViewById(R.id.videoView)
+        val seekBar:SeekBar = view.findViewById(R.id.seekbar)
+        private val mediaPlayer: MediaPlayer = MediaPlayer()
         private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
         private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
-        val profileButton: Button = view.findViewById(R.id.homeButton)
-        val videoTitle: TextView = view.findViewById(R.id.title)
-        val videoDescription: TextView = view.findViewById(R.id.description)
-        val username: TextView = view.findViewById(R.id.creatorName)
-        val profilePicture: ImageView = view.findViewById(R.id.profilePicture)
-        val saveButton: CheckBox = view.findViewById(R.id.saveButton)
-
-        fun setVideoPath (url: String) {
-            playerView.player = exoPlayer
-            playerView.useController = false
-
-            exoPlayer.seekTo(0)
-            exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-
-            val dataSourceFactory = DefaultDataSource.Factory(context)
-            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
-
-            exoPlayer.setMediaSource(mediaSource)
-            exoPlayer.prepare()
-
-            if (absoluteAdapterPosition == 0) {
-                exoPlayer.playWhenReady = true
-                exoPlayer.play()
-            }
-
-            videoPreparedListener.onVideoPrepared(ExoPlayerItem(exoPlayer, absoluteAdapterPosition))
-
+        val profileButton:Button = view.findViewById(R.id.homeButton)
+        val videoTitle:TextView=view.findViewById(R.id.title)
+        val videoDescription:TextView=view.findViewById(R.id.description)
+        val username:TextView=view.findViewById(R.id.creatorName)
+        val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
+        val saveButton:CheckBox=view.findViewById(R.id.saveButton)
+        init{
             videoTitle.setOnClickListener {
-                videoDescription.visibility = if (videoDescription.visibility == View.INVISIBLE) View.VISIBLE else View.INVISIBLE
+                videoDescription.visibility= if(videoDescription.visibility == INVISIBLE) VISIBLE else INVISIBLE
             }
 
             val update: Runnable = object : Runnable {
                 override fun run() {
-                    seekBar.progress = exoPlayer.currentPosition.toInt()
+                    seekBar.progress = videoView.currentPosition
                     seekBar.postDelayed(this, 1)
                 }
             }
 
-            exoPlayer.addListener(object : Player.Listener {
-                override fun onPlayerError(error: PlaybackException) {
-                    super.onPlayerError(error)
-                    Toast.makeText(context, "Can't play this video", Toast.LENGTH_SHORT).show()
+            videoView.setOnPreparedListener{ mp ->
+
+                shimmerLoading.visibility= GONE
+                loadedVideo.visibility= VISIBLE
+
+                val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
+                val screenRatio = videoView.width / videoView.height.toFloat()
+                val scaleX = videoRatio / screenRatio
+                if (scaleX >= 1f) {
+                    videoView.scaleX = scaleX
+                } else {
+                    videoView.scaleY = 1f / scaleX
                 }
+                mp.start()
+                mp.isLooping = true
 
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    if (playbackState == Player.STATE_READY && playWhenReady) {
-                        shimmerLoading.visibility = View.GONE
-                        loadedVideo.visibility = View.VISIBLE
 
-                        seekBar.max = exoPlayer.duration.toInt()
-                        seekBar.postDelayed(update, 1)
-                    }
-                }
-            })
-
-            profileButton.setOnClickListener {
-                Intent(context, ProfilePage::class.java).also {
+                seekBar.max = videoView.duration
+                seekBar.postDelayed(update, 1)
+            }
+            profileButton.setOnClickListener{
+//              Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
+                Intent(context, ProfilePage::class.java).also{
                     context.startActivity(it)
                 }
             }
-
-            val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+//            videoView.setOnErrorListener(MediaPlayer.OnErrorListener{
+//                mp, what, extra ->
+//                Toast.makeText(context, "Can't play video, try again later", Toast.LENGTH_LONG).show()
+//                true
+//            })
+             val videoGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                    exoPlayer.playWhenReady = !exoPlayer.isPlaying
+                    if (videoView.isPlaying) {
+                        videoView.pause()
+                    } else {
+                        videoView.start()
+                    }
                     return super.onSingleTapConfirmed(e)
                 }
             })
-            playerView.setOnTouchListener { _, event -> videoGestureDetector.onTouchEvent(event) }
+            videoView.setOnTouchListener { _, event -> videoGestureDetector.onTouchEvent(event) }
+
 
             seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onStopTrackingTouch(seekBar: SeekBar) {}
@@ -122,41 +98,38 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                     fromUser: Boolean
                 ) {
                     if (fromUser) {
-                        // This is when the seek bar is sought to a new position
-                        exoPlayer.seekTo(progress.toLong())
+                        // this is when actually seekbar has been sought to a new position
+                        videoView.seekTo(progress)
                     }
                 }
             })
+
         }
         fun preloadVideos(videoUrls: List<String>) {
             for (videoUrl in videoUrls) {
-                val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
-                val proxyUrl = proxy.getProxyUrl(videoUrl)
-                val dataSourceFactory = DefaultDataSource.Factory(context)
-                val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri(Uri.parse(proxyUrl)))
-                exoPlayer.setMediaSource(mediaSource)
-                exoPlayer.prepare()
-                exoPlayer.addListener(object : Player.Listener {
-                    override fun onIsLoadingChanged(isLoading: Boolean) {
-                        if (!isLoading) {
-                            exoPlayer.seekTo(0)
-                            exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-                        }
+                mediaPlayer.apply {
+                    reset()
+                    //val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
+                    //val proxyUrl = proxy.getProxyUrl(videoUrl)
+                    setDataSource(videoUrl)
+                    prepareAsync()
+                    setOnPreparedListener { mp ->
+                        // Video is preloaded and ready to play
+                        mp.isLooping = true
+                        mp.seekTo(0)
                     }
-                })
+                }
             }
         }
+
     }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         // create a new view
         val adapterLayout = LayoutInflater.from(parent.context)
             .inflate(R.layout.video_item, parent, false)
 
-        return ItemViewHolder(adapterLayout, videoPreparedListener)
+        return ItemViewHolder(adapterLayout)
     }
 
     object ProxyFactory {
@@ -174,7 +147,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
-        holder.videoTitle.text = item.title
+        holder.videoTitle.text=item.title
+        val context = holder.itemView.context
         holder.videoDescription.text = item.description
 
         val PRELOAD_VIDEO_COUNT = 3;
@@ -183,9 +157,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.preloadVideos(nextVideoUrls)
 
         // Set the video path for VideoView
-        val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
-        val proxyUrl = proxy.getProxyUrl(item.videoURL)
-        holder.setVideoPath(proxyUrl)
+        //val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
+        //val proxyUrl = proxy.getProxyUrl(item.videoURL)
+        holder.videoView.setVideoPath(item.videoURL)
 
         holder.saveButton.setOnClickListener {
 //            if(holder.saveButton.isChecked)
@@ -199,11 +173,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 //        holder.profilePicture.setImageURI(Uri.parse(getProfilePicture(item.uid)));
 
     }
-    override fun getItemCount() = dataset.size
-
-    interface OnVideoPreparedListener {
-        fun onVideoPrepared(exoPlayerItem: ExoPlayerItem)
-    }
+    /**
+     * Return the size of your dataset (invoked by the layout manager)
+     */ override fun getItemCount() = dataset.size
 }
 
 fun getUsername(uid:String):String{
