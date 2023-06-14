@@ -16,12 +16,17 @@ import com.example.shortvideoapp.R
 import com.example.shortvideoapp.SignupActivity
 import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
+import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
+    var user:User?=null
+    val auth = Firebase.auth
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
@@ -67,6 +72,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             profileButton.setOnClickListener{
 //                Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
                 Intent(context, ProfilepageActivity::class.java).also{
+                    it.putExtra("uid",auth.currentUser!!.uid)
                     context.startActivity(it)
                 }
             }
@@ -117,8 +123,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.videoTitle.text=item.title
         holder.videoView.setVideoPath(item.videoURL)
         holder.videoDescription.text = item.description
-//        holder.username.text= getUsername(item.uid);
-//        holder.profilePicture.setImageURI(Uri.parse(getProfilePicture(item.uid)));
 
     }
     /**

@@ -8,10 +8,10 @@ import com.example.shortvideoapp.GridFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-fun pageBasedOnContext(udi:String?,tabs:MutableList<Pair<String, Fragment>>,button:LinearLayout,buttonOther:LinearLayout):Unit
+fun pageBasedOnContext(uid:String?,tabs:MutableList<Pair<String, Fragment>>,button:LinearLayout,buttonOther:LinearLayout):Unit
 {
     val auth = Firebase.auth
-    if(udi==(auth.currentUser!!.uid))
+    if(uid==(auth.currentUser!!.uid))
     {
         buttonOther.visibility = View.GONE
         button.visibility = View.VISIBLE

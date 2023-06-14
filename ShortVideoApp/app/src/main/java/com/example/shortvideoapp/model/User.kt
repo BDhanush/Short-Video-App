@@ -5,7 +5,7 @@ data class User(val uid:String?=null,var username:String?=null,var firstName:Str
     val following:MutableList<String> = mutableListOf();
     val posts:MutableList<String> = mutableListOf();
     var about:String?=null;
-    var profilePicture:String;
+    var profilePicture:String?=null;
     init{
         profilePicture=""
     }
