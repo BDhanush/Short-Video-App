@@ -109,7 +109,7 @@ class AddVideoActivity : AppCompatActivity() {
         VideoCompressor.start(
             context = applicationContext,
             uris = listOf(videoUri!!),
-            isStreamable = false,
+            isStreamable = true,
             sharedStorageConfiguration = SharedStorageConfiguration(
                 saveAt = SaveLocation.movies,
                 videoName = "compressed_video"
@@ -138,107 +138,69 @@ class AddVideoActivity : AppCompatActivity() {
 
                 override fun onSuccess(index: Int, size: Long, path: String?) {
                     // On Compression success
-                    val outputDir = cacheDir.absolutePath
-                    val query:Array<String> = arrayOf(
-                        "-i", path!!,
-                        "-codec:", "copy",
-                        "-start_number", "0",
-                        "-hls_time", "10",
-                        "-hls_list_size", "0",
-                        "-f", "hls",
-                        outputDir+"/compressed_video.m3u8"
-                    )
-                    CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
-                        override fun statisticsProcess(statistics: Statistics) {
-                            Log.i("FFMPEG LOG : ", statistics.videoFrameNumber.toString())
-                        }
+                    //upload compressed video to firebase
+                    val compressedVideoUri = Uri.fromFile(path?.let { File(it) })
+                    storageReference.putFile(compressedVideoUri)
+                        .addOnSuccessListener { taskSnapshot ->
+                            //get url of uploaded video
+                            val uriTask: Task<Uri> = taskSnapshot.storage.downloadUrl
+                            while (!uriTask.isSuccessful);
+                            val downloadUrl = uriTask.result
+                            if (uriTask.isSuccessful) {
+                                //video url is received successfully
 
-                        override fun process(logMessage: LogMessage) {
-                            Log.i("FFMPEG LOG : ", logMessage.text)
-                        }
+                                //video details
+                                val hashMap = HashMap<String, Any>()
+                                hashMap["id"] = timestamp
+                                hashMap["title"] = title
+                                hashMap["timestamp"] = timestamp
+                                hashMap["videoUri"] = "$downloadUrl"
 
-                        override fun success() {
-                            //upload compressed video to firebase
-                            val compressedVideoUri = Uri.fromFile(File(outputDir+"/compressed_video.m3u8"))
-                            storageReference.putFile(compressedVideoUri)
-                                .addOnSuccessListener { taskSnapshot ->
-                                    //get url of uploaded video
-                                    val uriTask: Task<Uri> = taskSnapshot.storage.downloadUrl
-                                    while (!uriTask.isSuccessful);
-                                    val downloadUrl = uriTask.result
-                                    if (uriTask.isSuccessful) {
-                                        //video url is received successfully
+                                //put details into Database
+                                val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
+                                dbReference.child(timestamp).setValue(hashMap)
+                                    .addOnSuccessListener { taskSnapshot ->
+                                        //video details added successfully
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
 
-                                        //video details
-                                        val hashMap = HashMap<String, Any>()
-                                        hashMap["id"] = timestamp
-                                        hashMap["title"] = title
-                                        hashMap["timestamp"] = timestamp
-                                        hashMap["videoUri"] = "$downloadUrl"
-
-                                        //put details into Database
-                                        val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
-                                        dbReference.child(timestamp).setValue(hashMap)
-                                            .addOnSuccessListener { taskSnapshot ->
-                                                //video details added successfully
-                                                progressDialog.dismiss()
-                                                Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
-
-                                                // Delete the compressed video from local storage
-                                                val compressedVideoFile = path?.let { File(it) }
-                                                if (compressedVideoFile != null) {
-                                                    if (compressedVideoFile.exists()) {
-                                                        compressedVideoFile.delete()
-                                                    }
-                                                }
+                                        // Delete the compressed video from local storage
+                                        val compressedVideoFile = path?.let { File(it) }
+                                        if (compressedVideoFile != null) {
+                                            if (compressedVideoFile.exists()) {
+                                                compressedVideoFile.delete()
                                             }
-                                            .addOnFailureListener { e ->
-                                                //failed adding video details
-                                                progressDialog.dismiss()
-                                                Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
-
-                                                // Delete the compressed video from local storage
-                                                val compressedVideoFile = path?.let { File(it) }
-                                                if (compressedVideoFile != null) {
-                                                    if (compressedVideoFile.exists()) {
-                                                        compressedVideoFile.delete()
-                                                    }
-                                                }
-                                            }
-
-                                    }
-                                }
-                                .addOnFailureListener { e ->
-                                    //failed uploading
-                                    progressDialog.dismiss()
-                                    Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
-
-                                    // Delete the compressed video from local storage
-                                    val compressedVideoFile = path?.let { File(it) }
-                                    if (compressedVideoFile != null) {
-                                        if (compressedVideoFile.exists()) {
-                                            compressedVideoFile.delete()
                                         }
                                     }
+                                    .addOnFailureListener { e ->
+                                        //failed adding video details
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+
+                                        // Delete the compressed video from local storage
+                                        val compressedVideoFile = path?.let { File(it) }
+                                        if (compressedVideoFile != null) {
+                                            if (compressedVideoFile.exists()) {
+                                                compressedVideoFile.delete()
+                                            }
+                                        }
+                                    }
+
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            //failed uploading
+                            progressDialog.dismiss()
+                            Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+
+                            // Delete the compressed video from local storage
+                            val compressedVideoFile = path?.let { File(it) }
+                            if (compressedVideoFile != null) {
+                                if (compressedVideoFile.exists()) {
+                                    compressedVideoFile.delete()
                                 }
-                        }
-
-                        override fun cancel() {
-                            // Delete the compressed video from local storage
-                            val compressedVideoFile = File(path)
-                            if (compressedVideoFile.exists()) {
-                                compressedVideoFile.delete()
                             }
                         }
-
-                        override fun failed() {
-                            // Delete the compressed video from local storage
-                            val compressedVideoFile = File(path)
-                            if (compressedVideoFile.exists()) {
-                                compressedVideoFile.delete()
-                            }
-                        }
-                    })
                 }
 
                 override fun onFailure(index: Int, failureMessage: String) {
