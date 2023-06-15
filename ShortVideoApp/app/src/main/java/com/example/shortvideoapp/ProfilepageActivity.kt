@@ -49,12 +49,18 @@ class ProfilepageActivity : AppCompatActivity() {
 
         var user:User?=null
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users")
+
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
+                if(uid!=auth.currentUser!!.uid){
+                    if(dataSnapshot.child(uid!!).child("followers").child(auth.currentUser!!.uid).exists()){
+                        binding.follow.text="Following"
+                    }
+                }
                 val userMap=dataSnapshot.child(uid!!).value as Map<String,Any?>
                 user= userFromMap(userMap)
-
+                user!!.uid=uid
                 pageBasedOnContext(uid,user!!.about!!,tabs,button,buttonOther)
                 val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
                 val tabsAdapter=ProfileTabAdapter(this@ProfilepageActivity,tabs)
@@ -91,8 +97,37 @@ class ProfilepageActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
+        if(uid!=auth.currentUser!!.uid)
+        {
+            database.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    // Get Post object and use the values to update the UI
 
+                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/savedPosts").child(auth.currentUser!!.uid).exists()){
+                        binding.follow.text="Following"
+                    }
 
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+                }
+            })
+        }
+
+        binding.follow.setOnClickListener {
+            if(binding.follow.text=="Follow")
+            {
+                binding.follow.text="Following"
+                database.child("$uid/followers").child(auth.currentUser!!.uid).setValue(true)
+                database.child("${auth.currentUser!!.uid}/following").child(uid!!).setValue(true)
+            }else{
+                binding.follow.text="Follow"
+                database.child("$uid/followers").child(auth.currentUser!!.uid).removeValue()
+                database.child("${auth.currentUser!!.uid}/following").child(uid!!).removeValue()
+            }
+        }
 
     }
 
@@ -104,7 +139,7 @@ class ProfilepageActivity : AppCompatActivity() {
 //        binding.textFollowing.text = user.following.size.toString()
 //        binding.textPosts.text=user.posts.size.toString()
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${user.uid}")
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 binding.textFollowers.text="Followers: "+(dataSnapshot.child("followers").childrenCount).toString()
@@ -142,7 +177,7 @@ class ProfilepageActivity : AppCompatActivity() {
                                 val dominantColor = palette.getDominantColor(Color.LTGRAY)
 
 //                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
-//                                binding.collapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(dominantColor));
+                                binding.collapsingToolbar.setStatusBarScrimColor(dominantColor);
                                 binding.collapsingToolbar.setContentScrimColor(dominantColor);
 
                             }
