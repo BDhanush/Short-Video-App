@@ -40,9 +40,10 @@ import java.io.File
 class AddVideoActivity : AppCompatActivity() {
     //constants to pick video
     private val VIDEO_PICK_GALLERY_CODE = 100
-    private val VIDEO_PICK_CAMERA_CODE = 101
+    private val IMAGE_PICK_GALLERY_CODE = 101
+    private val VIDEO_PICK_CAMERA_CODE = 102
     //constant to request video recording permission
-    private val CAMERA_REQUEST_CODE = 102
+    private val CAMERA_REQUEST_CODE = 103
 
     //array for camera request permissions
     private lateinit var cameraPermissions:Array<String>
@@ -51,7 +52,7 @@ class AddVideoActivity : AppCompatActivity() {
 
     //uri and thumbnail of picked video
     private var videoUri: android.net.Uri? = null
-    private var videoThumbnail: Boolean = false
+    private var videoThumbnail: android.net.Uri? = null
 
     private var title:String = ""
     private var description:String = ""
@@ -110,7 +111,7 @@ class AddVideoActivity : AppCompatActivity() {
                 noPreview.text = "No Thumbnail Selected"
                 previewVideo.visibility = View.GONE
                 if (videoUri != null) {
-                    if (!videoThumbnail) {
+                    if (videoThumbnail == null) {
                         noPreview.visibility = View.INVISIBLE
                         //set default thumbnail
                         Glide.with(this).load(videoUri).into(previewThumbnail)
@@ -138,7 +139,12 @@ class AddVideoActivity : AppCompatActivity() {
                 videoPickDialog()
             }
             else {
-                //Thumbnail Selection From Gallery
+                if (videoUri != null) {
+                    imagePickGallery()
+                }
+                else {
+                    Toast.makeText(this, "Please Select A Video First", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -154,10 +160,12 @@ class AddVideoActivity : AppCompatActivity() {
         val timestamp = ""+System.currentTimeMillis()
 
         //filepath and name in firebase storage
-        val filePathAndName = "Videos/"+title+"_$timestamp"
+        val filePathAndNameVideo = "Videos/"+title+"_$timestamp"
+        val filePathAndNameThumbnail = "Thumbnails/"+title+"_$timestamp"
 
         //storage reference
-        val storageReference = FirebaseStorage.getInstance().getReference(filePathAndName)
+        val storageReferenceVideo = FirebaseStorage.getInstance().getReference(filePathAndNameVideo)
+        val storageReferenceThumbnail = FirebaseStorage.getInstance().getReference(filePathAndNameThumbnail)
 
         //compress video before uploading
         VideoCompressor.start(
@@ -194,36 +202,73 @@ class AddVideoActivity : AppCompatActivity() {
                     // On Compression success
                     //upload compressed video to firebase
                     val compressedVideoUri = Uri.fromFile(path?.let { File(it) })
-                    storageReference.putFile(compressedVideoUri)
-                        .addOnSuccessListener { taskSnapshot ->
+                    storageReferenceVideo.putFile(compressedVideoUri)
+                        .addOnSuccessListener { videoTaskSnapshot ->
                             //get url of uploaded video
-                            val uriTask: Task<Uri> = taskSnapshot.storage.downloadUrl
-                            while (!uriTask.isSuccessful);
-                            val downloadUrl = uriTask.result
-                            if (uriTask.isSuccessful) {
+                            val uriTaskVideo: Task<Uri> = videoTaskSnapshot.storage.downloadUrl
+                            while (!uriTaskVideo.isSuccessful);
+                            val downloadVideoUrl = uriTaskVideo.result
+                            if (uriTaskVideo.isSuccessful) {
                                 //video url is received successfully
+                                //upload thumbnail to firebase
+                                storageReferenceThumbnail.putFile(videoThumbnail!!)
+                                    .addOnSuccessListener {thumbnailTaskSnapshot ->
+                                        //get url of thumbnail
+                                        val uriTaskThumbnail: Task<Uri> = thumbnailTaskSnapshot.storage.downloadUrl
+                                        while (!uriTaskThumbnail.isSuccessful);
+                                        val downloadThumbnailUrl = uriTaskThumbnail.result
+                                        if (uriTaskThumbnail.isSuccessful) {
+                                            //video details
+                                            val videoDetails = Post(
+                                                "$downloadVideoUrl",
+                                                "$downloadThumbnailUrl",
+                                                auth.currentUser!!.uid,
+                                                title,
+                                                description
+                                            )
 
-                                //video details
-                                val videoDetails = Post("$downloadUrl", auth.currentUser!!.uid, title, description)
+                                            //put details into Database
+                                            val dbReference =
+                                                FirebaseDatabase.getInstance().getReference("posts")
+                                            dbReference.child(timestamp).setValue(videoDetails)
+                                                .addOnSuccessListener { taskSnapshot ->
+                                                    //video details added successfully
+                                                    progressDialog.dismiss()
+                                                    Toast.makeText(
+                                                        this@AddVideoActivity,
+                                                        "Video Uploaded",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
 
-                                //put details into Database
-                                val dbReference = FirebaseDatabase.getInstance().getReference("posts")
-                                dbReference.child(timestamp).setValue(videoDetails)
-                                    .addOnSuccessListener { taskSnapshot ->
-                                        //video details added successfully
-                                        progressDialog.dismiss()
-                                        Toast.makeText(this@AddVideoActivity, "Video Uploaded", Toast.LENGTH_SHORT).show()
+                                                    // Delete the compressed video from local storage
+                                                    val compressedVideoFile = path?.let { File(it) }
+                                                    if (compressedVideoFile != null) {
+                                                        if (compressedVideoFile.exists()) {
+                                                            compressedVideoFile.delete()
+                                                        }
+                                                    }
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    //failed adding video details
+                                                    progressDialog.dismiss()
+                                                    Toast.makeText(
+                                                        this@AddVideoActivity,
+                                                        "${e.message}",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
 
-                                        // Delete the compressed video from local storage
-                                        val compressedVideoFile = path?.let { File(it) }
-                                        if (compressedVideoFile != null) {
-                                            if (compressedVideoFile.exists()) {
-                                                compressedVideoFile.delete()
-                                            }
+                                                    // Delete the compressed video from local storage
+                                                    val compressedVideoFile = path?.let { File(it) }
+                                                    if (compressedVideoFile != null) {
+                                                        if (compressedVideoFile.exists()) {
+                                                            compressedVideoFile.delete()
+                                                        }
+                                                    }
+                                                }
                                         }
                                     }
                                     .addOnFailureListener { e ->
-                                        //failed adding video details
+                                        //failed adding thumbnail
                                         progressDialog.dismiss()
                                         Toast.makeText(this@AddVideoActivity, "${e.message}", Toast.LENGTH_SHORT).show()
 
@@ -235,7 +280,6 @@ class AddVideoActivity : AppCompatActivity() {
                                             }
                                         }
                                     }
-
                             }
                         }
                         .addOnFailureListener { e ->
@@ -340,6 +384,14 @@ class AddVideoActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "Choose video"), VIDEO_PICK_GALLERY_CODE)
     }
 
+    private fun imagePickGallery() {
+        val intent = android.content.Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+
+        startActivityForResult(Intent.createChooser(intent, "Choose image"), IMAGE_PICK_GALLERY_CODE)
+    }
+
     private fun videoPickCamera() {
         val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
         startActivityForResult(intent, VIDEO_PICK_CAMERA_CODE)
@@ -385,6 +437,11 @@ class AddVideoActivity : AppCompatActivity() {
             else if (requestCode == VIDEO_PICK_GALLERY_CODE) {
                 videoUri = data!!.data
                 setVideoToVideoView()
+            }
+            else if (requestCode == IMAGE_PICK_GALLERY_CODE) {
+                videoThumbnail = data!!.data
+                val imageView:ImageView=findViewById(R.id.previewThumbnail)
+                imageView.setImageURI(videoThumbnail)
             }
         }
         else {
