@@ -8,12 +8,15 @@ import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.Glide.init
 import com.example.shortvideoapp.MainActivity
 import com.example.shortvideoapp.ProfilepageActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.firebasefunctions.databaseURL
+import com.example.shortvideoapp.firebasefunctions.userFromMap
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -48,7 +51,13 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
 
         init{
             videoTitle.setOnClickListener {
-                stats.visibility= if(stats.visibility == GONE) VISIBLE else GONE
+                stats.visibility= if(stats.visibility == GONE) {
+                    videoTitle.maxLines= Int.MAX_VALUE
+                    VISIBLE
+                }else{
+                    videoTitle.maxLines=2
+                    GONE
+                }
             }
             val update: Runnable = object : Runnable {
                 override fun run() {
@@ -137,6 +146,21 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).removeValue()
 
         }
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                if(item.key!=null)
+                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).exists()){
+                        holder.saveButton.isChecked=true
+                    }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
         holder.downvote.setOnClickListener {
             database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).setValue(true)
             database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).removeValue()
@@ -146,6 +170,10 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
                 // Get Post object and use the values to update the UI
                 holder.upvoteCount.text=(dataSnapshot.child("posts/${item.key}/upvotes").childrenCount).toString()
                 holder.downvoteCount.text=(dataSnapshot.child("posts/${item.key}/downvotes").childrenCount).toString()
+                holder.username.text=(dataSnapshot.child("users").child(item.uid!!).child("username").value).toString()
+                val profilePicture=(dataSnapshot.child("users").child(item.uid!!).child("profilePicture").value).toString()
+                if(profilePicture!="")
+                    Glide.with(holder.itemView.context).load(profilePicture.toUri()).into(holder.profilePicture);
 
             }
 
@@ -157,10 +185,15 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
         holder.saveButton.setOnCheckedChangeListener { checkBox, isChecked ->
             if(isChecked){
                 database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).setValue(true)
-
             }else{
                 database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).removeValue()
 
+            }
+        }
+        holder.profilePicture.setOnClickListener {
+            Intent(context, ProfilepageActivity::class.java).also{
+                it.putExtra("uid",item.uid)
+                context.startActivity(it)
             }
         }
 

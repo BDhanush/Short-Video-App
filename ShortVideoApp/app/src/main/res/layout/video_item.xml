@@ -243,7 +243,7 @@
 
             android:layout_marginRight="16dp"
             android:textSize="18dp"
-
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             app:layout_constraintBottom_toBottomOf="@id/profilePicture"
             app:layout_constraintLeft_toRightOf="@id/profilePicture"
             app:layout_constraintRight_toLeftOf="@id/homeButton"
