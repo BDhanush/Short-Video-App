@@ -234,7 +234,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             }
         }
         holder.profilePicture.setOnClickListener {
-            Intent(context, ProfilepageActivity::class.java).also{
+            Intent(context, ProfilePageActivity::class.java).also{
                 it.putExtra("uid",item.uid)
                 context.startActivity(it)
             }
