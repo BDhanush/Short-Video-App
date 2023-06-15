@@ -109,19 +109,19 @@ class AddVideoActivity : AppCompatActivity() {
         VideoCompressor.start(
             context = applicationContext,
             uris = listOf(videoUri!!),
-            isStreamable = true,
+            isStreamable = false,
             sharedStorageConfiguration = SharedStorageConfiguration(
                 saveAt = SaveLocation.movies,
                 videoName = "compressed_video"
             ),
             configureWith = Configuration(
-                quality = VideoQuality.LOW,
-                isMinBitrateCheckEnabled = true,
-                //videoBitrateInMbps = 5,
+                quality = VideoQuality.VERY_HIGH,
+                isMinBitrateCheckEnabled = false,
+                videoBitrateInMbps = 1,
                 disableAudio = false,
-                keepOriginalResolution = true
-//                videoWidth = 360.0,
-//                videoHeight = 480.0
+                keepOriginalResolution = false
+                //videoWidth = 720.0,
+                //videoHeight = 1280.0
             ),
             listener = object : CompressionListener {
                 override fun onProgress(index: Int, percent: Float) {

@@ -25,6 +25,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
         val seekBar:SeekBar = view.findViewById(R.id.seekbar)
+        val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
         private val mediaPlayer: MediaPlayer = MediaPlayer()
         private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
         private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
@@ -109,7 +110,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             for (videoUrl in videoUrls) {
                 mediaPlayer.apply {
                     reset()
-                    val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
                     val proxyUrl = proxy.getProxyUrl(videoUrl)
                     setDataSource(proxyUrl)
                     prepareAsync()
@@ -157,8 +157,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.preloadVideos(nextVideoUrls)
 
         // Set the video path for VideoView
-        val proxy: HttpProxyCacheServer = ProxyFactory.getProxy(context)
-        val proxyUrl = proxy.getProxyUrl(item.videoURL)
+        val proxyUrl = holder.proxy.getProxyUrl(item.videoURL)
         holder.videoView.setVideoPath(proxyUrl)
 
         holder.saveButton.setOnClickListener {
