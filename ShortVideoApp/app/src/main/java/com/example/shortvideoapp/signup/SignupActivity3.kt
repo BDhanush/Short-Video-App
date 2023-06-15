@@ -18,6 +18,7 @@ import androidx.core.graphics.red
 import com.example.shortvideoapp.MainActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.databinding.ActivitySignup3Binding
+import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -61,13 +62,13 @@ class SignupActivity3 : AppCompatActivity() {
 
 
         auth = Firebase.auth
-        database = FirebaseDatabase.getInstance("https://nexum-c8155-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+        database = FirebaseDatabase.getInstance(databaseURL).reference
 
         auth.createUserWithEmailAndPassword(email,password.text.toString()).addOnCompleteListener(this) {
 
             if (it.isSuccessful) {
 
-//                writeNewUser(auth.currentUser!!.uid, firstName , lastName, email = email)
+                writeNewUser(auth.currentUser!!.uid, userName, firstName , lastName,email)
 
 
             } else {
