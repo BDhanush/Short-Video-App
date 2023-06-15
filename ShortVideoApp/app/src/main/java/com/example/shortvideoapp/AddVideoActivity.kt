@@ -1,24 +1,22 @@
 package com.example.shortvideoapp
 
+import android.R.attr.bitmap
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.media.Image
-import android.media.ThumbnailUtils
+import android.graphics.Canvas
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.view.View
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
 import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
@@ -34,7 +32,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.io.File
+
 
 /*add a new video*/
 class AddVideoActivity : AppCompatActivity() {
@@ -52,7 +52,7 @@ class AddVideoActivity : AppCompatActivity() {
 
     //uri and thumbnail of picked video
     private var videoUri: android.net.Uri? = null
-    private var videoThumbnail: android.net.Uri? = null
+    private var videoThumbnail: ByteArray? = null
 
     private var title:String = ""
     private var description:String = ""
@@ -111,15 +111,8 @@ class AddVideoActivity : AppCompatActivity() {
                 noPreview.text = "No Thumbnail Selected"
                 previewVideo.visibility = View.GONE
                 if (videoUri != null) {
-                    if (videoThumbnail == null) {
-                        noPreview.visibility = View.INVISIBLE
-                        //set default thumbnail
-                        Glide.with(this).load(videoUri).into(previewThumbnail)
-                        previewThumbnail.visibility = View.VISIBLE
-                    } else {
-                        noPreview.visibility = View.INVISIBLE
-                        previewThumbnail.visibility = View.VISIBLE
-                    }
+                    noPreview.visibility = View.INVISIBLE
+                    previewThumbnail.visibility = View.VISIBLE
                 }
             }
             else {
@@ -210,8 +203,21 @@ class AddVideoActivity : AppCompatActivity() {
                             val downloadVideoUrl = uriTaskVideo.result
                             if (uriTaskVideo.isSuccessful) {
                                 //video url is received successfully
+                                if (videoThumbnail == null) {
+                                    val imageView:ImageView=findViewById(R.id.previewThumbnail)
+                                    val thumbnail = Bitmap.createBitmap(
+                                        imageView.width,
+                                        imageView.height,
+                                        Bitmap.Config.ARGB_8888
+                                    )
+                                    val canvas = Canvas(thumbnail)
+                                    imageView.draw(canvas)
+                                    val baos = ByteArrayOutputStream()
+                                    thumbnail?.compress(Bitmap.CompressFormat.PNG, 100, baos)
+                                    videoThumbnail = baos.toByteArray()
+                                }
                                 //upload thumbnail to firebase
-                                storageReferenceThumbnail.putFile(videoThumbnail!!)
+                                storageReferenceThumbnail.putBytes(videoThumbnail!!)
                                     .addOnSuccessListener {thumbnailTaskSnapshot ->
                                         //get url of thumbnail
                                         val uriTaskThumbnail: Task<Uri> = thumbnailTaskSnapshot.storage.downloadUrl
@@ -318,6 +324,7 @@ class AddVideoActivity : AppCompatActivity() {
         //video play controls
         val mediaController = MediaController(this)
         val videoView:VideoView=findViewById(R.id.previewVideo)
+        val imageView:ImageView=findViewById(R.id.previewThumbnail)
 
         //set media controller
         mediaController.setAnchorView(videoView)
@@ -326,6 +333,9 @@ class AddVideoActivity : AppCompatActivity() {
         //set videoView
         videoView.visibility = View.VISIBLE
         videoView.setMediaController(mediaController)
+
+        //set imageView with default thumbnail
+        Glide.with(this).load(videoUri).into(imageView)
 
         //set video uri
         videoView.setVideoURI(videoUri)
@@ -439,9 +449,13 @@ class AddVideoActivity : AppCompatActivity() {
                 setVideoToVideoView()
             }
             else if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-                videoThumbnail = data!!.data
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, data!!.data)
                 val imageView:ImageView=findViewById(R.id.previewThumbnail)
-                imageView.setImageURI(videoThumbnail)
+                imageView.setImageBitmap(thumbnail)
+
+                val baos = ByteArrayOutputStream()
+                thumbnail?.compress(Bitmap.CompressFormat.PNG, 100, baos)
+                videoThumbnail = baos.toByteArray()
             }
         }
         else {
