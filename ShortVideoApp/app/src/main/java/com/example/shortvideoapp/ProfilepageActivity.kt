@@ -1,6 +1,7 @@
 package com.example.shortvideoapp
 
 import android.content.ContentValues
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -85,7 +86,11 @@ class ProfilepageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
-
+        binding.btnEditProfile.setOnClickListener {
+            Intent(this, EditProfileActivity::class.java).also{
+                startActivity(it)
+            }
+        }
 
 
 
@@ -136,9 +141,9 @@ class ProfilepageActivity : AppCompatActivity() {
                             it?.let { palette ->
                                 val dominantColor = palette.getDominantColor(Color.LTGRAY)
 
-                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
-                                binding.collapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(dominantColor));
-                                binding.collapsingToolbar.setContentScrimColor(palette.getMutedColor(dominantColor));
+//                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
+//                                binding.collapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(dominantColor));
+                                binding.collapsingToolbar.setContentScrimColor(dominantColor);
 
                             }
                         }

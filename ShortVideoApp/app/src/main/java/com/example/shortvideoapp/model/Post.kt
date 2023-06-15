@@ -5,9 +5,37 @@ import android.util.Log
 import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.google.firebase.database.*
 
-data class Post(val videoURL:String,val uid:String,val title:String,val description:String,val upvotes:Int,val downvotes:Int)
+data class Post(var videoURL:String?=null,var uid:String?=null,var title:String?=null,var description:String?=null)
 {
-    var profilePicture: String?=null;
-    var username:String?=null;
-    var comments:MutableList<String> = mutableListOf();
+    var key:String?=null
+    var upvotes:MutableList<String> = mutableListOf()
+    var downvotes:MutableList<String> = mutableListOf()
+    var comments:MutableList<String> = mutableListOf()
+
+    constructor(map:Map<String,Any?>) : this(
+        videoURL=map["videoURL"] as String,
+        uid=map["uid"] as String,
+        title=map["title"] as String,
+        description=map["description"] as String) {
+
+        if(map["key"]!=null)
+            key = map["key"] as String
+        upvotes=try{
+            map["upvotes"] as MutableList<String>
+        }catch (e:Exception){
+            mutableListOf()
+        }
+        downvotes=try{
+            map["downvotes"] as MutableList<String>
+        }catch (e:Exception){
+            mutableListOf()
+        }
+        comments=try{
+            map["comments"] as MutableList<String>
+        }catch (e:Exception){
+            mutableListOf()
+        }
+
+    }
+
 }
