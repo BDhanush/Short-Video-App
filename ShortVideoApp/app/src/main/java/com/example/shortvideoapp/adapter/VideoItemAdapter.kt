@@ -49,6 +49,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
         val downvote:Button=view.findViewById(R.id.downvoteButton)
         val upvoteCount:TextView=view.findViewById(R.id.upvotes)
         val downvoteCount:TextView=view.findViewById(R.id.downvotes)
+        val saveButton:CheckBox=view.findViewById(R.id.saveButton)
 
 
         init{
@@ -183,7 +184,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).setValue(true)
             database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).removeValue()
         }
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 holder.upvoteCount.text=(dataSnapshot.child("posts/${item.key}/upvotes").childrenCount).toString()
@@ -196,6 +197,15 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+        holder.saveButton.setOnCheckedChangeListener { checkBox, isChecked ->
+            if(isChecked){
+                database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).setValue(true)
+
+            }else{
+                database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).removeValue()
+
+            }
+        }
 
     }
     /**

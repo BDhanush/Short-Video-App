@@ -14,9 +14,9 @@ data class User(var username:String?=null,var firstName:String?=null,var lastNam
         lastName=map["lastName"] as String
         profilePicture=map["profilePicture"] as String?
 
-        if(uid!=null)
+        if(map["uid"]!=null)
             uid=map["uid"] as String
-        if(email!=null)
+        if(map["email"]!=null)
             email=map["email"] as String
 
         followers=try{

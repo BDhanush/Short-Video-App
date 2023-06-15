@@ -18,7 +18,8 @@ data class Post(var videoURL:String?=null,var uid:String?=null,var title:String?
         title=map["title"] as String,
         description=map["description"] as String) {
 
-        //key = map["key"] as String
+        if(map["key"]!=null)
+            key = map["key"] as String
         upvotes=try{
             map["upvotes"] as MutableList<String>
         }catch (e:Exception){

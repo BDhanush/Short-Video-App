@@ -36,6 +36,14 @@
             android:theme="@style/Theme.ShortVideoApp"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".EditProfileActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_profile">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:configChanges="orientation"

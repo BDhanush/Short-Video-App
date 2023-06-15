@@ -94,7 +94,11 @@ class ProfilePageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
-
+        binding.btnEditProfile.setOnClickListener {
+            Intent(this, EditProfileActivity::class.java).also{
+                startActivity(it)
+            }
+        }
 
 
 
@@ -145,9 +149,9 @@ class ProfilePageActivity : AppCompatActivity() {
                             it?.let { palette ->
                                 val dominantColor = palette.getDominantColor(Color.LTGRAY)
 
-                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
-                                binding.collapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(dominantColor));
-                                binding.collapsingToolbar.setContentScrimColor(palette.getMutedColor(dominantColor));
+//                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
+//                                binding.collapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(dominantColor));
+                                binding.collapsingToolbar.setContentScrimColor(dominantColor);
 
                             }
                         }

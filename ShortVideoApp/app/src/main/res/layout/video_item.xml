@@ -4,19 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!--    <com.google.android.exoplayer2.ui.StyledPlayerView-->
-<!--        android:id="@+id/videoView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
-
-
-
-<!--    </com.google.android.exoplayer2.ui.StyledPlayerView>-->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
@@ -62,13 +49,10 @@
 
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:button="@drawable/selector_save"
             app:layout_constraintBottom_toTopOf="@id/homeButton"
             app:layout_constraintEnd_toEndOf="parent"
 
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-
-            android:button="@drawable/selector_save"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="10dp" />
         <Button
