@@ -1,28 +1,40 @@
 package com.example.shortvideoapp.model
 
+import android.content.ContentValues.TAG
 import android.util.Log
+import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.google.firebase.database.*
 
-data class Post(val videoURL:String,val uid:String,val title:String,val description:String,val upvotes:Int,val downvotes:Int)
+data class Post(var videoURL:String?=null,var uid:String?=null,var title:String?=null,var description:String?=null)
 {
-    var profilePicture: String?=null;
-    var username:String?=null;
-    var comments:MutableList<String> = mutableListOf();
-    init {
-        //get username from database
-        val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance("https://shortvideoapp-e7456-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(uid).child("username");
-        val postListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                username = dataSnapshot.value as String;
-            }
+    var key:String?=null
+    var upvotes:MutableList<String> = mutableListOf()
+    var downvotes:MutableList<String> = mutableListOf()
+    var comments:MutableList<String> = mutableListOf()
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Getting Post failed, log a message
-//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-            }
+    constructor(map:Map<String,Any?>) : this(
+        videoURL=map["videoURL"] as String,
+        uid=map["uid"] as String,
+        title=map["title"] as String,
+        description=map["description"] as String) {
+
+        key = map["key"] as String
+        upvotes=try{
+            map["upvotes"] as MutableList<String>
+        }catch (e:Exception){
+            mutableListOf()
         }
-        databaseUsername.addValueEventListener(postListener)
-
+        downvotes=try{
+            map["downvotes"] as MutableList<String>
+        }catch (e:Exception){
+            mutableListOf()
+        }
+        comments=try{
+            map["comments"] as MutableList<String>
+        }catch (e:Exception){
+            mutableListOf()
+        }
 
     }
+
 }

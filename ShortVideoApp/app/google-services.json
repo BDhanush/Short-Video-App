@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "87711674153",
-    "firebase_url": "https://shortv-5f59c-default-rtdb.firebaseio.com",
-    "project_id": "shortv-5f59c",
-    "storage_bucket": "shortv-5f59c.appspot.com"
+    "project_number": "612564994722",
+    "firebase_url": "https://shortform-6fdba-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shortform-6fdba",
+    "storage_bucket": "shortform-6fdba.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:87711674153:android:e57a0a05180eee7f035138",
+        "mobilesdk_app_id": "1:612564994722:android:f5347e689c1ec01ab425fb",
         "android_client_info": {
           "package_name": "com.example.shortvideoapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "87711674153-u1k64mpotets94pnq4vfubspjt0h764t.apps.googleusercontent.com",
+          "client_id": "612564994722-aeftmb0933nf7mghkqg5h3nsohqp8rca.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDJevJ0JOdcdXWfWpaVnn_MEREF9X37tKM"
+          "current_key": "AIzaSyBfgfOA6u0NOM2OalxAkWMZbc4LdK2T5nU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "87711674153-u1k64mpotets94pnq4vfubspjt0h764t.apps.googleusercontent.com",
+              "client_id": "612564994722-aeftmb0933nf7mghkqg5h3nsohqp8rca.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
