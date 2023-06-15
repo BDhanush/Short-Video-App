@@ -43,6 +43,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
         val downvote:Button=view.findViewById(R.id.downvoteButton)
         val upvoteCount:TextView=view.findViewById(R.id.upvotes)
         val downvoteCount:TextView=view.findViewById(R.id.downvotes)
+        val saveButton:CheckBox=view.findViewById(R.id.saveButton)
 
 
         init{
@@ -153,6 +154,15 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+        holder.saveButton.setOnCheckedChangeListener { checkBox, isChecked ->
+            if(isChecked){
+                database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).setValue(true)
+
+            }else{
+                database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).removeValue()
+
+            }
+        }
 
     }
     /**
