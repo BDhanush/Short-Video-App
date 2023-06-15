@@ -148,7 +148,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
         holder.videoTitle.text=item.title
-        val context = holder.itemView.context
         holder.videoDescription.text = item.description
 
         val PRELOAD_VIDEO_COUNT = 3;
