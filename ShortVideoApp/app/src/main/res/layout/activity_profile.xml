@@ -23,7 +23,6 @@
                 android:layout_height="match_parent"
                 app:contentScrim="?attr/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:title="Bommi"
                 app:expandedTitleGravity="center|top"
                 app:expandedTitleMarginTop="168dp"
                 app:collapsedTitleGravity="center_horizontal"
