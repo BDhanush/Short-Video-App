@@ -141,7 +141,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).setValue(true)
             database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).removeValue()
         }
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 holder.upvoteCount.text=(dataSnapshot.child("posts/${item.key}/upvotes").childrenCount).toString()
