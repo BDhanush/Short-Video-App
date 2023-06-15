@@ -74,7 +74,7 @@ class SignupActivity : AppCompatActivity() {
         }
     }
     fun writeNewUser(uid:String,username:String,firstName:String,lastName:String,email:String) {
-        val user = User(uid,username,firstName,lastName,email);
+        val user = User(username,firstName,lastName);
         database.child("users").child(uid).setValue(user)
     }
 }
