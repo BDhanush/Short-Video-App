@@ -14,7 +14,7 @@ data class Post(var videoURL:String?=null,var thumbnail:String?=null,var uid:Str
 
     constructor(map:Map<String,Any?>) : this(
         videoURL=map["videoURL"] as String,
-        thumbnail=map["thumbnail"] as String,
+        thumbnail=map["thumbnail"] as String?,
         uid=map["uid"] as String,
         title=map["title"] as String,
         description=map["description"] as String) {
