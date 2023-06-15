@@ -7,7 +7,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:id="@+id/loadedVideo">
 
         <VideoView
