@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("posts")
-        database.addValueEventListener(object : ValueEventListener {
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 //                postDataset.clear()
