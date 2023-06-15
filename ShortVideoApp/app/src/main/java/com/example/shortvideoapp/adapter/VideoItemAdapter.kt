@@ -94,10 +94,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             }
             profileButton.setOnClickListener{
 //                Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
-                Intent(context, ProfilePageActivity::class.java).also{
-                    it.putExtra("uid",auth.currentUser!!.uid)
-                    context.startActivity(it)
-                }
+                openProfile(context,auth.currentUser!!.uid)
             }
 //            videoView.setOnErrorListener(MediaPlayer.OnErrorListener{
 //                mp, what, extra ->
@@ -130,6 +127,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
                     }
                 }
             })
+
         }
         fun preloadVideos(videoUrls: List<String>) {
             for (videoUrl in videoUrls) {
@@ -234,16 +232,23 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             }
         }
         holder.profilePicture.setOnClickListener {
-            Intent(context, ProfilePageActivity::class.java).also{
-                it.putExtra("uid",item.uid)
-                context.startActivity(it)
-            }
+            openProfile(context,item.uid!!)
+        }
+        holder.username.setOnClickListener {
+            openProfile(context,item.uid!!)
         }
 
     }
     /**
      * Return the size of your dataset (invoked by the layout manager)
      */ override fun getItemCount() = dataset.size
+}
+
+fun openProfile(context:Context,uid:String){
+    Intent(context, ProfilepageActivity::class.java).also{
+        it.putExtra("uid",uid)
+        context.startActivity(it)
+    }
 }
 
 fun getUsername(uid:String):String{
