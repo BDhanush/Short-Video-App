@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.ProfilepageActivity
 import com.example.shortvideoapp.R
-import com.example.shortvideoapp.SignupActivity
+import com.example.shortvideoapp.signup.SignupActivity1
 import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
