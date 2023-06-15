@@ -38,6 +38,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val videoDescription:TextView=view.findViewById(R.id.description)
         val username:TextView=view.findViewById(R.id.creatorName)
         val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
+        val upvote:Button=view.findViewById(R.id.upvoteButton)
+        val downvote:Button=view.findViewById(R.id.downvoteButton)
+
         init{
             videoTitle.setOnClickListener {
                 videoDescription.visibility= if(videoDescription.visibility == INVISIBLE) VISIBLE else INVISIBLE
@@ -107,6 +110,12 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                     }
                 }
             })
+            upvote.setOnClickListener {
+
+            }
+            downvote.setOnClickListener {
+
+            }
         }
     }
 
