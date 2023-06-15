@@ -99,7 +99,24 @@ class ProfilePageActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
+        if(uid!=auth.currentUser!!.uid)
+        {
+            database.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    // Get Post object and use the values to update the UI
 
+                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/savedPosts").child(auth.currentUser!!.uid).exists()){
+                        binding.follow.text="Following"
+                    }
+
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+                }
+            })
+        }
 
 
     }
@@ -150,7 +167,7 @@ class ProfilePageActivity : AppCompatActivity() {
                                 val dominantColor = palette.getDominantColor(Color.LTGRAY)
 
 //                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
-//                                binding.collapsingToolbar.setStatusBarScrimColor(palette.getDarkMutedColor(dominantColor));
+                                binding.collapsingToolbar.setStatusBarScrimColor(dominantColor);
                                 binding.collapsingToolbar.setContentScrimColor(dominantColor);
 
                             }
