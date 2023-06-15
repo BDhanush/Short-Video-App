@@ -103,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
     {
         var check:Boolean=true;
         val p: Pattern =
-            Pattern.compile("^[a-z]+([2][0-9])(ucse|uari|ucam|umee|uece|ueee)[0-9][0-9][0-9]@mahindrauniversity.edu.in\$")
+            Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
         val m: Matcher = p.matcher(binding.usernameInput.text.toString().trim())
         val emailCheck: Boolean = m.matches()
         if (binding.usernameInput.text.toString().trim().isEmpty()) {

@@ -3,6 +3,8 @@
     <string name="Username">Username</string>
     <string name="Password">Password</string>
     <string name="log_in">Log in</string>
+    <string name="firstname">First Name</string>
+    <string name="lastname">Last Name</string>
     <string name="forgot_password_question">Forgot Password?</string>
     <string name="login_text">LOGIN</string>
     <string name="signup_text">SIGNUP</string>

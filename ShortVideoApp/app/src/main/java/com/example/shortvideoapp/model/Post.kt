@@ -8,6 +8,7 @@ import com.google.firebase.database.*
 data class Post(var videoURL:String?=null,var uid:String?=null,var title:String?=null,var description:String?=null)
 {
     var key:String?=null
+    var thumbnail:String?=null
     var upvotes:MutableList<String> = mutableListOf()
     var downvotes:MutableList<String> = mutableListOf()
     var comments:MutableList<String> = mutableListOf()
@@ -17,6 +18,8 @@ data class Post(var videoURL:String?=null,var uid:String?=null,var title:String?
         uid=map["uid"] as String,
         title=map["title"] as String,
         description=map["description"] as String) {
+        if(map["thumbnail"]!=null)
+            thumbnail=map["thumbnail"] as String
 
         if(map["key"]!=null)
             key = map["key"] as String
