@@ -1,12 +1,14 @@
 package com.example.shortvideoapp
 
 import android.content.ContentValues
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +34,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 
-class ProfilepageActivity : AppCompatActivity() {
+class ProfilePageActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,14 @@ class ProfilepageActivity : AppCompatActivity() {
         val tabs:MutableList<Pair<String,Fragment>> = mutableListOf()
         val button:LinearLayout = findViewById(R.id.buttons)
         val buttonOther:LinearLayout = findViewById(R.id.buttonsOther)
+        val uploadButton: Button =findViewById(R.id.btnUpload)
         val uid=intent.getStringExtra("uid")
+
+        //handle upload button click
+        uploadButton.setOnClickListener {
+            //starts the activity that adds a new video
+            startActivity(Intent(this, AddVideoActivity::class.java))
+        }
 
         var user:User?=null
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users")
@@ -56,7 +65,7 @@ class ProfilepageActivity : AppCompatActivity() {
 
                 pageBasedOnContext(uid,user!!.about!!,tabs,button,buttonOther)
                 val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
-                val tabsAdapter=ProfileTabAdapter(this@ProfilepageActivity,tabs)
+                val tabsAdapter=ProfileTabAdapter(this@ProfilePageActivity,tabs)
                 val tabLayout: TabLayout= findViewById(R.id.tabLayout)
                 tabsViewPager.adapter=tabsAdapter
                 TabLayoutMediator(tabLayout,tabsViewPager) {tab,position->

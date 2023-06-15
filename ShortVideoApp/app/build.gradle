@@ -61,7 +61,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.6'
     implementation 'com.github.AbedElazizShe:LightCompressor:1.2.3'
     implementation 'com.danikula:videocache:2.7.1'
-    implementation 'com.github.SimformSolutionsPvtLtd:SSffmpegVideoOperation:1.0.8'
-    implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
 
 }

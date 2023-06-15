@@ -1,47 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    android:background="@color/gray"
-    tools:context=".AddVideoActivity">
-    
-    <EditText
-        android:id="@+id/titleEnter"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
+    <LinearLayout
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:hint="Enter Title"
-        android:inputType="textPersonName|textCapSentences"
-        android:padding="10dp"
-        android:textColor="@color/black"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
 
-    <VideoView
-        android:id="@+id/videoView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@+id/titleEnter"
-        android:layout_marginTop="10dp"/>
-    
-    <Button
-        android:id="@+id/uploadVideoButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/videoView"
-        android:layout_marginTop="5dp"
-        android:text="Upload Video"
-        android:backgroundTint="@color/purple_500"
-        android:textColor="@color/white"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Upload Video"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/addVideo"
+                app:layout_constraintBottom_toBottomOf="@id/addVideo"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addVideo"
+                android:text="Choose Video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                app:icon="@drawable/baseline_add_24"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <RelativeLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+            <TextView
+                android:id="@+id/noPreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/previewThumbnail"
+                android:layout_alignTop="@+id/previewThumbnail"
+                android:layout_alignRight="@+id/previewThumbnail"
+                android:layout_alignBottom="@+id/previewThumbnail"
+                android:layout_margin="1dp"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:text="No Video Selected" />
+            <VideoView
+                android:id="@+id/previewVideo"
+                android:visibility="gone"
+                android:layout_width="168dp"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                />
+            <ImageView
+                android:id="@+id/previewThumbnail"
+                android:visibility="invisible"
+                android:layout_width="168dp"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                />
+        </RelativeLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/videoTitleLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/pickGalleryFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:src="@drawable/baseline_video_library_24"
-        android:backgroundTint="@color/purple_500"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="Video Title"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/videoTitleInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName|textCapSentences" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descriptionLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="Description"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descriptionInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/uploadVideoButton"
+            android:text="Upload Video"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/switchView"
+            android:text="Preview Thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:showAnimationBehavior="outward"
+            app:hideAnimationBehavior="inward"
+            android:visibility="invisible" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:padding="10dp"-->
+<!--    android:background="@color/gray"-->
+<!--    tools:context=".AddVideoActivity">-->
+<!--    -->
+<!--    <EditText-->
+<!--        android:id="@+id/titleEnter"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/white"-->
+<!--        android:hint="Enter Title"-->
+<!--        android:inputType="textPersonName|textCapSentences"-->
+<!--        android:padding="10dp"-->
+<!--        android:textColor="@color/black"/>-->
+
+<!--    <VideoView-->
+<!--        android:id="@+id/videoView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="300dp"-->
+<!--        android:layout_below="@+id/titleEnter"-->
+<!--        android:layout_marginTop="10dp"/>-->
+<!--    -->
+<!--    <Button-->
+<!--        android:id="@+id/uploadVideoButton"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/videoView"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:text="Upload Video"-->
+<!--        android:backgroundTint="@color/purple_500"-->
+<!--        android:textColor="@color/white"/>-->
+
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/pickGalleryFab"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:src="@drawable/baseline_video_library_24"-->
+<!--        android:backgroundTint="@color/purple_500"/>-->
 
 
-</RelativeLayout>
+<!--</RelativeLayout>-->

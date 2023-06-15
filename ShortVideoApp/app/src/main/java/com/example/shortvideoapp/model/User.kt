@@ -16,7 +16,8 @@ data class User(var username:String?=null,var firstName:String?=null,var lastNam
 
         if(uid!=null)
             uid=map["uid"] as String
-        email=map["email"] as String
+        if(email!=null)
+            email=map["email"] as String
 
         followers=try{
             map["followers"] as MutableList<String>

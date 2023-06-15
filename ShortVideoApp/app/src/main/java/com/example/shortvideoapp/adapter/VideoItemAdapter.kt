@@ -2,6 +2,7 @@ package com.example.shortvideoapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.media.MediaPlayer
@@ -12,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide.init
 import com.example.shortvideoapp.MainActivity
-import com.example.shortvideoapp.ProfilepageActivity
+import com.example.shortvideoapp.ProfilePageActivity
 import com.danikula.videocache.HttpProxyCacheServer
 import com.example.shortvideoapp.ProfilePage
 import com.example.shortvideoapp.R
@@ -83,7 +84,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
             }
             profileButton.setOnClickListener{
 //                Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
-                Intent(context, ProfilepageActivity::class.java).also{
+                Intent(context, ProfilePageActivity::class.java).also{
                     it.putExtra("uid",auth.currentUser!!.uid)
                     context.startActivity(it)
                 }
@@ -165,7 +166,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
         val PRELOAD_VIDEO_COUNT = 3;
         val nextVideos = dataset.subList(position + 1, minOf(position + 1 + PRELOAD_VIDEO_COUNT, dataset.size))
         val nextVideoUrls = nextVideos.map { it.videoURL }
-        holder.preloadVideos(nextVideoUrls)
+        holder.preloadVideos(nextVideoUrls as List<String>)
 
         // Set the video path for VideoView
         val proxyUrl = holder.proxy.getProxyUrl(item.videoURL)

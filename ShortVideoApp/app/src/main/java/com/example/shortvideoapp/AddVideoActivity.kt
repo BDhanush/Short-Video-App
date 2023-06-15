@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.MediaController
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
@@ -23,14 +25,14 @@ import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation
 import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration
+import com.example.shortvideoapp.model.Post
 import com.google.android.gms.tasks.Task
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.simform.videooperations.CallBackOfQuery
-import com.simform.videooperations.FFmpegCallBack
-import com.simform.videooperations.LogMessage
-import com.simform.videooperations.Statistics
 import java.io.File
 
 /*add a new video*/
@@ -50,6 +52,7 @@ class AddVideoActivity : AppCompatActivity() {
     private var videoUri: android.net.Uri? = null
 
     private var title:String = ""
+    private var description:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,17 +67,24 @@ class AddVideoActivity : AppCompatActivity() {
         progressDialog.setMessage("Uploading Video...")
         progressDialog.setCanceledOnTouchOutside(false)
 
-
         val uploadVideoButton:Button=findViewById(R.id.uploadVideoButton)
-        val pickGalleryFab:FloatingActionButton=findViewById(R.id.pickGalleryFab)
+        val chooseFromGallery:MaterialButton=findViewById(R.id.addVideo)
+        val switchView:MaterialButton=findViewById(R.id.switchView)
+
         //handle uploadVideoButton click
         uploadVideoButton.setOnClickListener {
             //get title
-            val titleEnter:EditText=findViewById(R.id.titleEnter)
+            val titleEnter:EditText=findViewById(R.id.videoTitleInput)
+            val descriptionEnter:EditText=findViewById(R.id.descriptionInput)
             title = titleEnter.text.toString().trim()
+            description = descriptionEnter.text.toString().trim()
             if (TextUtils.isEmpty(title)) {
                 //no title entered
                 Toast.makeText(this, "Title is required", Toast.LENGTH_SHORT).show()
+            }
+            else if (TextUtils.isEmpty(description)) {
+                //no description entered
+                Toast.makeText(this, "Description is required", Toast.LENGTH_SHORT).show()
             }
             else if (videoUri == null) {
                 //video is not picked
@@ -86,13 +96,40 @@ class AddVideoActivity : AppCompatActivity() {
             }
         }
 
-        //handle pickGalleryFab click
-        pickGalleryFab.setOnClickListener {
-            videoPickDialog()
+        //handle chooseFromGallery click
+        switchView.setOnClickListener {
+            val noPreview:TextView=findViewById(R.id.noPreview)
+            val previewVideo:VideoView=findViewById(R.id.previewVideo)
+            val previewThumbnail:ImageView=findViewById(R.id.previewThumbnail)
+
+            if (switchView.text == "Preview Thumbnail") {
+                switchView.text = "Preview Video"
+                chooseFromGallery.text = "Choose Thumbnail"
+                noPreview.text = "No Thumbnail Selected"
+                previewVideo.visibility = View.GONE
+                previewThumbnail.visibility = View.VISIBLE
+            }
+            else {
+                switchView.text = "Preview Thumbnail"
+                chooseFromGallery.text = "Choose Video"
+                noPreview.text = "No Video Selected"
+                if (videoUri != null)
+                    previewVideo.visibility = View.VISIBLE
+                previewThumbnail.visibility = View.INVISIBLE
+            }
+        }
+
+        //handle switchView click
+        chooseFromGallery.setOnClickListener {
+            if (chooseFromGallery.text == "Choose Video")
+                videoPickDialog()
         }
     }
 
     private fun uploadVideoFirebase() {
+        //auth
+        var auth: FirebaseAuth = Firebase.auth
+
         //show progress
         progressDialog.show()
 
@@ -100,7 +137,7 @@ class AddVideoActivity : AppCompatActivity() {
         val timestamp = ""+System.currentTimeMillis()
 
         //filepath and name in firebase storage
-        val filePathAndName = "Videos/video_$timestamp"
+        val filePathAndName = "Videos/"+title+"_$timestamp"
 
         //storage reference
         val storageReference = FirebaseStorage.getInstance().getReference(filePathAndName)
@@ -150,15 +187,11 @@ class AddVideoActivity : AppCompatActivity() {
                                 //video url is received successfully
 
                                 //video details
-                                val hashMap = HashMap<String, Any>()
-                                hashMap["id"] = timestamp
-                                hashMap["title"] = title
-                                hashMap["timestamp"] = timestamp
-                                hashMap["videoUri"] = "$downloadUrl"
+                                val videoDetails = Post("$downloadUrl", auth.currentUser!!.uid, title, description)
 
                                 //put details into Database
-                                val dbReference = FirebaseDatabase.getInstance().getReference("Videos")
-                                dbReference.child(timestamp).setValue(hashMap)
+                                val dbReference = FirebaseDatabase.getInstance().getReference("posts")
+                                dbReference.child(timestamp).setValue(videoDetails)
                                     .addOnSuccessListener { taskSnapshot ->
                                         //video details added successfully
                                         progressDialog.dismiss()
@@ -223,10 +256,14 @@ class AddVideoActivity : AppCompatActivity() {
 
         //video play controls
         val mediaController = MediaController(this)
-        val videoView:VideoView=findViewById(R.id.videoView)
-        mediaController.setAnchorView(videoView)
+        val videoView:VideoView=findViewById(R.id.previewVideo)
 
         //set media controller
+        mediaController.setAnchorView(videoView)
+        mediaController.visibility = View.GONE
+
+        //set videoView
+        videoView.visibility = View.VISIBLE
         videoView.setMediaController(mediaController)
 
         //set video uri

@@ -11,7 +11,7 @@ class ProfilePage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.test)
+        setContentView(R.layout.profile_page_layout)
 
         // Get a reference to the ViewPager2 in profilepage.xml
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
