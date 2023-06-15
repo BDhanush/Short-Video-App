@@ -1,19 +1,18 @@
 package com.example.shortvideoapp.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.ContentValues
 import android.content.Intent
-import android.media.MediaPlayer
-import android.net.Uri
+import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide.init
+import com.example.shortvideoapp.MainActivity
 import com.example.shortvideoapp.ProfilepageActivity
 import com.example.shortvideoapp.R
-import com.example.shortvideoapp.SignupActivity
 import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
@@ -21,9 +20,8 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
-import org.w3c.dom.Text
 
-class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: MainActivity, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     var user:User?=null
     val auth = Firebase.auth
@@ -38,14 +36,18 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val profileButton:Button = view.findViewById(R.id.homeButton)
         val videoTitle:TextView=view.findViewById(R.id.title)
         val videoDescription:TextView=view.findViewById(R.id.description)
+        val stats:ConstraintLayout=view.findViewById(R.id.descriptionAndCounts)
         val username:TextView=view.findViewById(R.id.creatorName)
         val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
         val upvote:Button=view.findViewById(R.id.upvoteButton)
         val downvote:Button=view.findViewById(R.id.downvoteButton)
+        val upvoteCount:TextView=view.findViewById(R.id.upvotes)
+        val downvoteCount:TextView=view.findViewById(R.id.downvotes)
+
 
         init{
             videoTitle.setOnClickListener {
-                videoDescription.visibility= if(videoDescription.visibility == INVISIBLE) VISIBLE else INVISIBLE
+                stats.visibility= if(stats.visibility == GONE) VISIBLE else GONE
             }
             val update: Runnable = object : Runnable {
                 override fun run() {
@@ -138,6 +140,19 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).setValue(true)
             database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).removeValue()
         }
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                holder.upvoteCount.text=(dataSnapshot.child("posts/${item.key}/upvotes").childrenCount).toString()
+                holder.downvoteCount.text=(dataSnapshot.child("posts/${item.key}/downvotes").childrenCount).toString()
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
 
     }
     /**
