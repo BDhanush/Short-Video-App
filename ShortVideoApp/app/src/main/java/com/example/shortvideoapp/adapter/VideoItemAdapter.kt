@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
@@ -13,11 +14,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.ProfilepageActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.SignupActivity
+import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
+import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
+import org.w3c.dom.Text
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
+    var user:User?=null
+    val auth = Firebase.auth
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
@@ -25,9 +34,14 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         private val shimmerLoading: ShimmerFrameLayout = view.findViewById(R.id.shimmerVideo)
         private val loadedVideo: ConstraintLayout = view.findViewById(R.id.loadedVideo)
         val profileButton:Button = view.findViewById(R.id.homeButton)
-
+        val videoTitle:TextView=view.findViewById(R.id.title)
+        val videoDescription:TextView=view.findViewById(R.id.description)
+        val username:TextView=view.findViewById(R.id.creatorName)
+        val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
         init{
-
+            videoTitle.setOnClickListener {
+                videoDescription.visibility= if(videoDescription.visibility == INVISIBLE) VISIBLE else INVISIBLE
+            }
             val update: Runnable = object : Runnable {
                 override fun run() {
                     seekBar.progress = videoView.currentPosition
@@ -58,6 +72,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             profileButton.setOnClickListener{
 //                Toast.makeText(context, "Click", Toast.LENGTH_LONG).show()
                 Intent(context, ProfilepageActivity::class.java).also{
+                    it.putExtra("uid",auth.currentUser!!.uid)
                     context.startActivity(it)
                 }
             }
@@ -105,10 +120,46 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
-
+        holder.videoTitle.text=item.title
         holder.videoView.setVideoPath(item.videoURL)
+        holder.videoDescription.text = item.description
+
     }
     /**
      * Return the size of your dataset (invoked by the layout manager)
      */ override fun getItemCount() = dataset.size
+}
+
+fun getUsername(uid:String):String{
+    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance(databaseURL).reference.child("users").child(uid).child("username");
+    var username:String?=null;
+    val postListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            username = dataSnapshot.value as String;
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            // Getting Post failed, log a message
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+        }
+    }
+    databaseUsername.addValueEventListener(postListener)
+    return username!!
+}
+
+fun getProfilePicture(uid:String):String{
+    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance(databaseURL).reference.child("users").child(uid).child("profilePicture");
+    var profilePicture:String?=null;
+    val postListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            profilePicture = dataSnapshot.value as String;
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            // Getting Post failed, log a message
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+        }
+    }
+    databaseUsername.addValueEventListener(postListener)
+    return profilePicture!!
 }
