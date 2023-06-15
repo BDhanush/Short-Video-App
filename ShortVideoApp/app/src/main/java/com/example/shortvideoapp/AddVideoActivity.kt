@@ -3,28 +3,29 @@ package com.example.shortvideoapp
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.media.Image
+import android.media.ThumbnailUtils
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.MediaController
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.VideoView
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
 import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation
 import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration
+import com.bumptech.glide.Glide
 import com.example.shortvideoapp.model.Post
 import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
@@ -48,8 +49,9 @@ class AddVideoActivity : AppCompatActivity() {
 
     private lateinit var progressDialog: ProgressDialog
 
-    //uri of picked video
+    //uri and thumbnail of picked video
     private var videoUri: android.net.Uri? = null
+    private var videoThumbnail: Boolean = false
 
     private var title:String = ""
     private var description:String = ""
@@ -107,11 +109,22 @@ class AddVideoActivity : AppCompatActivity() {
                 chooseFromGallery.text = "Choose Thumbnail"
                 noPreview.text = "No Thumbnail Selected"
                 previewVideo.visibility = View.GONE
-                previewThumbnail.visibility = View.VISIBLE
+                if (videoUri != null) {
+                    if (!videoThumbnail) {
+                        noPreview.visibility = View.INVISIBLE
+                        //set default thumbnail
+                        Glide.with(this).load(videoUri).into(previewThumbnail)
+                        previewThumbnail.visibility = View.VISIBLE
+                    } else {
+                        noPreview.visibility = View.INVISIBLE
+                        previewThumbnail.visibility = View.VISIBLE
+                    }
+                }
             }
             else {
                 switchView.text = "Preview Thumbnail"
                 chooseFromGallery.text = "Choose Video"
+                noPreview.visibility = View.VISIBLE
                 noPreview.text = "No Video Selected"
                 if (videoUri != null)
                     previewVideo.visibility = View.VISIBLE
@@ -121,8 +134,12 @@ class AddVideoActivity : AppCompatActivity() {
 
         //handle switchView click
         chooseFromGallery.setOnClickListener {
-            if (chooseFromGallery.text == "Choose Video")
+            if (chooseFromGallery.text == "Choose Video") {
                 videoPickDialog()
+            }
+            else {
+                //Thumbnail Selection From Gallery
+            }
         }
     }
 
