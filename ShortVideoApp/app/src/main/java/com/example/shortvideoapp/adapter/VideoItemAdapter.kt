@@ -27,6 +27,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 {
     var user:User?=null
     val auth = Firebase.auth
+    val database = FirebaseDatabase.getInstance(databaseURL).reference
+
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         val videoView: VideoView = view.findViewById(R.id.videoView)
@@ -110,12 +112,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                     }
                 }
             })
-            upvote.setOnClickListener {
 
-            }
-            downvote.setOnClickListener {
-
-            }
         }
     }
 
@@ -132,6 +129,15 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.videoTitle.text=item.title
         holder.videoView.setVideoPath(item.videoURL)
         holder.videoDescription.text = item.description
+        holder.upvote.setOnClickListener {
+            database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).setValue(true)
+            database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).removeValue()
+
+        }
+        holder.downvote.setOnClickListener {
+            database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).setValue(true)
+            database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).removeValue()
+        }
 
     }
     /**
