@@ -245,7 +245,7 @@ class VideoItemAdapter(private val context: MainActivity, val dataset:MutableLis
 }
 
 fun openProfile(context:Context,uid:String){
-    Intent(context, ProfilepageActivity::class.java).also{
+    Intent(context, ProfilePageActivity::class.java).also{
         it.putExtra("uid",uid)
         context.startActivity(it)
     }
