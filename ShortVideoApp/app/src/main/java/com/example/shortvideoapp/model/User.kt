@@ -1,5 +1,7 @@
 package com.example.shortvideoapp.model
 
+import com.google.firebase.database.Exclude
+
 data class User(var username:String?=null,var firstName:String?=null,var lastName:String?=null,var profilePicture:String?=null) {
     var uid:String?=null
     var email:String?=null
@@ -41,6 +43,16 @@ data class User(var username:String?=null,var firstName:String?=null,var lastNam
         }
         about = if(about!=null) map["about"] as String else ""
 
+    }
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "username" to username,
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "profilePicture" to profilePicture,
+            "about" to about
+        )
     }
 
 }
