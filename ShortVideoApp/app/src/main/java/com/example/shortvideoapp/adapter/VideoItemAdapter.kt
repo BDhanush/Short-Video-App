@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide.init
 import com.example.shortvideoapp.MainActivity
 import com.example.shortvideoapp.ProfilePageActivity
 import com.danikula.videocache.HttpProxyCacheServer
-import com.example.shortvideoapp.ProfilePage
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.firebasefunctions.userFromMap
