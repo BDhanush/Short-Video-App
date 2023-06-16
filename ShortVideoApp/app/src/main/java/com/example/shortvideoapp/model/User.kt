@@ -30,7 +30,8 @@ data class User(var username:String?=null,var firstName:String?=null,var lastNam
             mutableListOf()
         }
         posts=try{
-            map["posts"] as MutableList<String>
+            val postMap= map["posts"] as Map<String,String>
+            postMap.keys as MutableList<String>
         }catch (e:Exception){
             mutableListOf()
         }

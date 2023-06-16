@@ -1,15 +1,21 @@
 package com.example.shortvideoapp.adapter
 
+import android.content.ContentValues
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shortvideoapp.DisplayVideoActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.model.Post
+
 
 class GridViewAdapter(private val dataset: MutableList<Post>) : BaseAdapter() {
 
@@ -35,7 +41,7 @@ class GridViewAdapter(private val dataset: MutableList<Post>) : BaseAdapter() {
 
             // Create a ViewHolder to hold references to the views
             viewHolder = ViewHolder()
-            viewHolder.thumbnailImageView = view.findViewById<ImageView>(R.id.imageView)
+            viewHolder.imageView = view.findViewById(R.id.imageView)
 
             view.tag = viewHolder
         } else {
@@ -43,20 +49,21 @@ class GridViewAdapter(private val dataset: MutableList<Post>) : BaseAdapter() {
             viewHolder = view.tag as ViewHolder
         }
 
-        val post = dataset[position]
-
-        // Load the video thumbnail image using Glide library
+        // Load the image using Glide or Picasso
         parent?.context?.let {
             Glide.with(it)
-                .load(post.thumbnail)
-                .into(viewHolder.thumbnailImageView)
+                .load(dataset[position].thumbnail)
+                .into(viewHolder.imageView)
+
         }
 
-        // Set click listener for the thumbnail image
-        viewHolder.thumbnailImageView.setOnClickListener {
+
+        // Set click listener for the ImageView
+        viewHolder.imageView.setOnClickListener {
             // Handle the click event
+
             val intent = Intent(parent?.context, DisplayVideoActivity::class.java)
-            intent.putExtra("videoUrl", post.videoURL)
+            intent.putExtra("videoUrl", dataset[position].videoURL)
             // Add any other necessary data to the intent
             parent?.context?.startActivity(intent)
         }
@@ -66,8 +73,9 @@ class GridViewAdapter(private val dataset: MutableList<Post>) : BaseAdapter() {
 
     // ViewHolder class to hold references to the views
     private class ViewHolder {
-        lateinit var thumbnailImageView: ImageView
+        lateinit var imageView: ImageView
     }
+
+
+
 }
-
-

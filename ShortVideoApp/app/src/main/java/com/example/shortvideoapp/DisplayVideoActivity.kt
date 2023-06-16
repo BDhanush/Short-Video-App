@@ -15,7 +15,7 @@ class DisplayVideoActivity : AppCompatActivity() {
 
         videoView = findViewById(R.id.videoView)
 
-        val videoUrl = intent.getStringExtra("videoURL")
+        val videoUrl = intent.getStringExtra("videoUrl")
         videoUrl?.let {
             val videoUri = Uri.parse(it)
             videoView.setVideoURI(videoUri)
