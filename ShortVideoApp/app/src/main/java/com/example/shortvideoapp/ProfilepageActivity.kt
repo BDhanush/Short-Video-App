@@ -11,6 +11,9 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
@@ -92,6 +95,12 @@ class ProfilepageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+        binding.profileImage.setOnClickListener {
+            val intent = Intent(this, DisplayImageActivity::class.java)
+            intent.putExtra("imageUrl", user?.profilePicture?:"")
+
+            startActivity(intent)
+        }
         binding.btnEditProfile.setOnClickListener {
             Intent(this, EditProfileActivity::class.java).also{
                 startActivity(it)
@@ -179,6 +188,17 @@ class ProfilepageActivity : AppCompatActivity() {
 //                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
                                 binding.collapsingToolbar.setStatusBarScrimColor(dominantColor);
                                 binding.collapsingToolbar.setContentScrimColor(dominantColor);
+
+                                var hsv = FloatArray(3)
+                                Color.colorToHSV(dominantColor,hsv);
+
+                                val brightness = hsv[2];
+
+                                if (brightness < 0.5) {
+                                    binding.collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE)
+                                } else {
+                                    binding.collapsingToolbar.setCollapsedTitleTextColor(Color.BLACK)
+                                }
 
                             }
                         }
