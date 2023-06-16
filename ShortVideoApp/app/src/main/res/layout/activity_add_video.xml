@@ -122,6 +122,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/switchView"
             android:text="Preview Thumbnail"
+            app:icon="@drawable/outline_remove_red_eye_24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
