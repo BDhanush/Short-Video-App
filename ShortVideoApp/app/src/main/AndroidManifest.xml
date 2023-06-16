@@ -24,6 +24,13 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".DisplayImageActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:configChanges="orientation"
             android:exported="true"
