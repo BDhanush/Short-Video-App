@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.SeekBar.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +26,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 
-class VideoItemAdapter(private val context: MainActivity, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: AppCompatActivity, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     var user:User?=null
     val auth = Firebase.auth

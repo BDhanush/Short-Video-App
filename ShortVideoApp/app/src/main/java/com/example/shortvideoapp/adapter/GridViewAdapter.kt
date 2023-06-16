@@ -63,7 +63,7 @@ class GridViewAdapter(private val dataset: MutableList<Post>) : BaseAdapter() {
             // Handle the click event
 
             val intent = Intent(parent?.context, DisplayVideoActivity::class.java)
-            intent.putExtra("videoUrl", dataset[position].videoURL)
+            intent.putExtra("postKey", dataset[position].key)
             // Add any other necessary data to the intent
             parent?.context?.startActivity(intent)
         }
