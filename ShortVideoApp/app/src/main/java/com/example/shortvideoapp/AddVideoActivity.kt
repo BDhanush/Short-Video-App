@@ -52,7 +52,6 @@ class AddVideoActivity : AppCompatActivity() {
 
     //uri and thumbnail of picked video
     private var videoUri: android.net.Uri? = null
-    private var videoThumbnail: ByteArray? = null
 
     private var title:String = ""
     private var description:String = ""
@@ -69,6 +68,7 @@ class AddVideoActivity : AppCompatActivity() {
         progressDialog.setTitle("Please Wait")
         progressDialog.setMessage("Uploading Video...")
         progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setCancelable(false)
 
         val uploadVideoButton:Button=findViewById(R.id.uploadVideoButton)
         val chooseFromGallery:MaterialButton=findViewById(R.id.addVideo)
@@ -146,7 +146,7 @@ class AddVideoActivity : AppCompatActivity() {
         //auth
         var auth: FirebaseAuth = Firebase.auth
 
-        //show progress
+        //show uploading progress
         progressDialog.show()
 
         //timestamp
@@ -203,21 +203,19 @@ class AddVideoActivity : AppCompatActivity() {
                             val downloadVideoUrl = uriTaskVideo.result
                             if (uriTaskVideo.isSuccessful) {
                                 //video url is received successfully
-                                if (videoThumbnail == null) {
-                                    val imageView:ImageView=findViewById(R.id.previewThumbnail)
-                                    val thumbnail = Bitmap.createBitmap(
-                                        imageView.width,
-                                        imageView.height,
-                                        Bitmap.Config.ARGB_8888
-                                    )
-                                    val canvas = Canvas(thumbnail)
-                                    imageView.draw(canvas)
-                                    val baos = ByteArrayOutputStream()
-                                    thumbnail?.compress(Bitmap.CompressFormat.PNG, 100, baos)
-                                    videoThumbnail = baos.toByteArray()
-                                }
+                                val imageView:ImageView=findViewById(R.id.previewThumbnail)
+                                val thumbnail = Bitmap.createBitmap(
+                                    imageView.width,
+                                    imageView.height,
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                val canvas = Canvas(thumbnail)
+                                imageView.draw(canvas)
+                                val baos = ByteArrayOutputStream()
+                                thumbnail?.compress(Bitmap.CompressFormat.JPEG, 50, baos)
+                                val videoThumbnail = baos.toByteArray()
                                 //upload thumbnail to firebase
-                                storageReferenceThumbnail.putBytes(videoThumbnail!!)
+                                storageReferenceThumbnail.putBytes(videoThumbnail)
                                     .addOnSuccessListener {thumbnailTaskSnapshot ->
                                         //get url of thumbnail
                                         val uriTaskThumbnail: Task<Uri> = thumbnailTaskSnapshot.storage.downloadUrl
@@ -237,22 +235,45 @@ class AddVideoActivity : AppCompatActivity() {
                                             val dbReference =
                                                 FirebaseDatabase.getInstance().getReference("posts")
                                             dbReference.child(timestamp).setValue(videoDetails)
-                                                .addOnSuccessListener { taskSnapshot ->
+                                                .addOnSuccessListener {
                                                     //video details added successfully
-                                                    progressDialog.dismiss()
-                                                    Toast.makeText(
-                                                        this@AddVideoActivity,
-                                                        "Video Uploaded",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                    val userDBReference =
+                                                        FirebaseDatabase.getInstance().getReference("users")
+                                                    userDBReference.child("${auth.currentUser!!.uid}/posts").child(timestamp).setValue(true)
+                                                        .addOnSuccessListener {
+                                                            //user posts updated
+                                                            progressDialog.dismiss()
+                                                            Toast.makeText(
+                                                                this@AddVideoActivity,
+                                                                "Video Uploaded",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
 
-                                                    // Delete the compressed video from local storage
-                                                    val compressedVideoFile = path?.let { File(it) }
-                                                    if (compressedVideoFile != null) {
-                                                        if (compressedVideoFile.exists()) {
-                                                            compressedVideoFile.delete()
+                                                            // Delete the compressed video from local storage
+                                                            val compressedVideoFile = path?.let { File(it) }
+                                                            if (compressedVideoFile != null) {
+                                                                if (compressedVideoFile.exists()) {
+                                                                    compressedVideoFile.delete()
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                        .addOnFailureListener { e ->
+                                                            //failed adding user posts details
+                                                            progressDialog.dismiss()
+                                                            Toast.makeText(
+                                                                this@AddVideoActivity,
+                                                                "${e.message}",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+
+                                                            // Delete the compressed video from local storage
+                                                            val compressedVideoFile = path?.let { File(it) }
+                                                            if (compressedVideoFile != null) {
+                                                                if (compressedVideoFile.exists()) {
+                                                                    compressedVideoFile.delete()
+                                                                }
+                                                            }
+                                                        }
                                                 }
                                                 .addOnFailureListener { e ->
                                                     //failed adding video details
@@ -340,8 +361,18 @@ class AddVideoActivity : AppCompatActivity() {
         //set video uri
         videoView.setVideoURI(videoUri)
         videoView.requestFocus()
-        videoView.setOnPreparedListener {
-            it.isLooping = true
+        videoView.setOnPreparedListener { mp ->
+            // scale video
+            val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
+            val screenRatio = videoView.width / videoView.height.toFloat()
+            val scaleX = videoRatio / screenRatio
+            if (scaleX >= 1f) {
+                videoView.scaleX = scaleX
+            } else {
+                videoView.scaleY = 1f / scaleX
+            }
+
+            mp.isLooping = true
             //by default play automatically
             videoView.start()
             //by default do not play automatically
@@ -449,13 +480,8 @@ class AddVideoActivity : AppCompatActivity() {
                 setVideoToVideoView()
             }
             else if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, data!!.data)
                 val imageView:ImageView=findViewById(R.id.previewThumbnail)
-                imageView.setImageBitmap(thumbnail)
-
-                val baos = ByteArrayOutputStream()
-                thumbnail?.compress(Bitmap.CompressFormat.PNG, 100, baos)
-                videoThumbnail = baos.toByteArray()
+                imageView.setImageURI(data!!.data)
             }
         }
         else {
