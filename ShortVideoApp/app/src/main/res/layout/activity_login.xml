@@ -18,14 +18,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.34">
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/login_text"
+            android:fontFamily="@font/intermed"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:fontFamily="monospace"
-            android:textColor="#000000"
+            android:textColor="?attr/colorOnBackground"
             android:layout_gravity="center_horizontal"/>
 
 
@@ -35,7 +36,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="26dp"
             android:hint="@string/email"
             app:startIconDrawable="@drawable/baseline_account_circle_24"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,14 +73,17 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/forgotPasswordButton"
+
+        <TextView
+            android:id="@+id/forgotPasswordLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:textColor="@color/link_color"
+            android:clickable="true"
             android:layout_marginTop="8dp"
-            android:text="@string/forgot_password_question"
-            android:textSize="14sp"
-            android:backgroundTint="#000000"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="@id/passwordLayout"
             app:layout_constraintTop_toBottomOf="@id/passwordLayout"/>
 
@@ -87,9 +91,11 @@
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:text="@string/log_in"
+            android:layout_marginBottom="16dp"
+            android:text="Login"
+            android:fontFamily="@font/intermed"
             app:cornerRadius="8dp"
+            app:backgroundTint="?attr/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
@@ -98,10 +104,11 @@
             android:id="@+id/signupButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/no_account"
+            android:text="Create Account"
+            app:cornerRadius="8dp"
             android:textSize="14sp"
-            android:backgroundTint="#000000"
+            android:textColor="?attr/colorOnSecondary"
+            android:backgroundTint="?attr/colorSecondary"
             app:layout_constraintEnd_toEndOf="@id/passwordLayout"
             app:layout_constraintTop_toBottomOf="@id/loginButton"/>
 

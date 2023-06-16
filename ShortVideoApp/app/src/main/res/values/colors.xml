@@ -10,6 +10,8 @@
 
     <color name="gray">#eee</color>
     <color name="shimmer">#656565</color>
+    <color name="link_color">#6F8AEA</color>
+
 
 
 </resources>
