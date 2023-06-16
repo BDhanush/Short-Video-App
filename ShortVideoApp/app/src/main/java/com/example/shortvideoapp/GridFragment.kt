@@ -74,7 +74,7 @@ class GridFragment : Fragment() {
                             post.key = dataSnapshot.key as String
 
                             postDataset.add(post)
-                            Toast.makeText(context,"${postDataset.size}",Toast.LENGTH_SHORT).show()
+//                            Toast.makeText(context,"${postDataset.size}",Toast.LENGTH_SHORT).show()
                                 // Data loading complete, set the adapter on the grid
                             adapter = GridViewAdapter(postDataset)
                             binding.gridPosts.adapter = adapter
