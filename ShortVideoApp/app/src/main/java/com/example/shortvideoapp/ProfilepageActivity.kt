@@ -112,7 +112,7 @@ class ProfilepageActivity : AppCompatActivity() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // Get Post object and use the values to update the UI
 
-                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/savedPosts").child(auth.currentUser!!.uid).exists()){
+                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/following").child(auth.currentUser!!.uid).exists()){
                         binding.follow.text="Following"
                     }
 

@@ -23,7 +23,7 @@
         android:id="@+id/homeButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/outline_home_24"
+        android:background="@drawable/outline_account_circle_24"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -51,7 +51,7 @@ class GridFragment : Fragment() {
         val view = binding.root
 
 
-        var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/$uid/$type")
+        var database = FirebaseDatabase.getInstance(databaseURL).getReference("users").child("$uid/$type")
         val postKeys= mutableListOf<String>()
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -62,36 +62,35 @@ class GridFragment : Fragment() {
                     postKeys.add(snapshot.key as String)
                 }
                 for(postKey in postKeys){
-//                    Toast.makeText(context,"${postKey}",Toast.LENGTH_SHORT).show()
 
                     val databaseRefPosts=FirebaseDatabase.getInstance(databaseURL).getReference("posts/$postKey")
-                databaseRefPosts.addListenerForSingleValueEvent(object : ValueEventListener {
-                    @RequiresApi(Build.VERSION_CODES.O)
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                postDataset.clear()
-                        // Get Post object and use the values to update the UI
-                        val postMap = dataSnapshot.value as Map<String, Any?>
-                        val post = postFromMap(postMap)
-                        post.key = dataSnapshot.key as String
+                    databaseRefPosts.addListenerForSingleValueEvent(object : ValueEventListener {
+                        @RequiresApi(Build.VERSION_CODES.O)
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                            postDataset.clear()
+                            // Get Post object and use the values to update the UI
+                            val postMap = dataSnapshot.value as Map<String, Any?>
+                            val post = postFromMap(postMap)
+                            post.key = dataSnapshot.key as String
 
-                        postDataset.add(post)
-                            // Data loading complete, set the adapter on the grid
+                            postDataset.add(post)
+                            Toast.makeText(context,"${postDataset.size}",Toast.LENGTH_SHORT).show()
+                                // Data loading complete, set the adapter on the grid
                             adapter = GridViewAdapter(postDataset)
                             binding.gridPosts.adapter = adapter
 
+                        }
 
-                    }
 
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Getting Post failed, log a message
-                        Log.w(
-                            ContentValues.TAG,
-                            "loadPost:onCancelled",
-                            databaseError.toException()
-                        )
-                    }
-                })
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // Getting Post failed, log a message
+                            Log.w(
+                                ContentValues.TAG,
+                                "loadPost:onCancelled",
+                                databaseError.toException()
+                            )
+                        }
+                    })
                 }
                 adapter = GridViewAdapter(postDataset)
                 binding.gridPosts.adapter=adapter
