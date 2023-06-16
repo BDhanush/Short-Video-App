@@ -103,6 +103,12 @@ class ProfilePageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+        binding.profileImage.setOnClickListener {
+            val intent = Intent(this, DisplayImageActivity::class.java)
+            intent.putExtra("imageUrl", user?.profilePicture?:"")
+
+            startActivity(intent)
+        }
         binding.btnEditProfile.setOnClickListener {
             Intent(this, EditProfileActivity::class.java).also{
                 startActivity(it)
