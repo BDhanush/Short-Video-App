@@ -18,8 +18,8 @@ fun pageBasedOnContext(uid:String,about:String,tabs:MutableList<Pair<String, Fra
         buttonOther.visibility = View.GONE
         button.visibility = View.VISIBLE
         tabs.clear()
-        tabs.add(Pair("Posts", newGridInstance<GridFragment>(uid,"savedPosts")))
-        tabs.add(Pair("Saved", newGridInstance<GridFragment>(uid,"posts")))
+        tabs.add(Pair("Posts", newGridInstance<GridFragment>(uid,"posts")))
+        tabs.add(Pair("Saved", newGridInstance<GridFragment>(uid,"savedPosts")))
         tabs.add(Pair("About", newAboutInstance<AboutFragment>(about)))
         return
     }

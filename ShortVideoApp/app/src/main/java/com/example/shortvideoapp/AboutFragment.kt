@@ -39,6 +39,7 @@ class AboutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val about:TextView=view.findViewById(R.id.about)
         about.text=aboutText
+
     }
 
     companion object {
