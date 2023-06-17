@@ -250,37 +250,3 @@ fun openProfile(context:Context,uid:String){
         context.startActivity(it)
     }
 }
-
-fun getUsername(uid:String):String{
-    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance(databaseURL).reference.child("users").child(uid).child("username");
-    var username:String?=null;
-    val postListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            username = dataSnapshot.value as String;
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            // Getting Post failed, log a message
-//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-        }
-    }
-    databaseUsername.addValueEventListener(postListener)
-    return username!!
-}
-
-fun getProfilePicture(uid:String):String{
-    val databaseUsername: DatabaseReference = FirebaseDatabase.getInstance(databaseURL).reference.child("users").child(uid).child("profilePicture");
-    var profilePicture:String?=null;
-    val postListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            profilePicture = dataSnapshot.value as String;
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            // Getting Post failed, log a message
-//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-        }
-    }
-    databaseUsername.addValueEventListener(postListener)
-    return profilePicture!!
-}

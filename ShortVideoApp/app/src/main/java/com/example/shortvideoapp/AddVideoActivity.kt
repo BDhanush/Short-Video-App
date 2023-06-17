@@ -109,7 +109,7 @@ class AddVideoActivity : AppCompatActivity() {
                 switchView.text = "Preview Video"
                 chooseFromGallery.text = "Choose Thumbnail"
                 noPreview.text = "No Thumbnail Selected"
-                previewVideo.visibility = View.GONE
+                previewVideo.visibility = View.INVISIBLE
                 if (videoUri != null) {
                     noPreview.visibility = View.INVISIBLE
                     previewThumbnail.visibility = View.VISIBLE
@@ -358,11 +358,7 @@ class AddVideoActivity : AppCompatActivity() {
         //set imageView with default thumbnail
         Glide.with(this).load(videoUri).into(imageView)
 
-        //set video uri
-        videoView.setVideoURI(videoUri)
-        videoView.requestFocus()
         videoView.setOnPreparedListener { mp ->
-            // scale video
             val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
             val screenRatio = videoView.width / videoView.height.toFloat()
             val scaleX = videoRatio / screenRatio
@@ -371,13 +367,13 @@ class AddVideoActivity : AppCompatActivity() {
             } else {
                 videoView.scaleY = 1f / scaleX
             }
-
+            mp.start()
             mp.isLooping = true
-            //by default play automatically
-            videoView.start()
-            //by default do not play automatically
-            //videoView.pause()
         }
+
+        videoView.setVideoURI(videoUri)
+        videoView.requestFocus()
+
     }
 
     private fun videoPickDialog() {
