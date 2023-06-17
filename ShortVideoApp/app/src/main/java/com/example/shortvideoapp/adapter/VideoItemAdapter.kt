@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.util.Log
 import android.media.MediaPlayer
 import android.view.*
@@ -28,7 +29,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 
-class VideoItemAdapter(private val context: AppCompatActivity, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     var user:User?=null
     val auth = Firebase.auth
@@ -187,7 +188,7 @@ class VideoItemAdapter(private val context: AppCompatActivity, val dataset:Mutab
             database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).removeValue()
 
         }
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 if(item.key!=null)
@@ -203,18 +204,19 @@ class VideoItemAdapter(private val context: AppCompatActivity, val dataset:Mutab
             }
         })
         holder.downvote.setOnClickListener {
-            database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).setValue(true)
-            database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).removeValue()
+            database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
+            database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
         }
+        val databaseRefUpvotes=database.child("upvotes/${item.key}")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                holder.upvoteCount.text=(dataSnapshot.child("posts/${item.key}/upvotes").childrenCount).toString()
-                holder.downvoteCount.text=(dataSnapshot.child("posts/${item.key}/downvotes").childrenCount).toString()
+                holder.upvoteCount.text=(dataSnapshot.child("upvotes/${item.key}").childrenCount).toString()
+                holder.downvoteCount.text=(dataSnapshot.child("downvotes/${item.key}").childrenCount).toString()
                 holder.username.text=(dataSnapshot.child("users").child(item.uid!!).child("username").value).toString()
                 val profilePicture=(dataSnapshot.child("users").child(item.uid!!).child("profilePicture").value).toString()
                 if(profilePicture!="")
-                    Glide.with(holder.itemView.context).load(profilePicture.toUri()).into(holder.profilePicture);
+                    Glide.with(context).load(profilePicture.toUri()).into(holder.profilePicture);
 
             }
 
@@ -246,6 +248,7 @@ class VideoItemAdapter(private val context: AppCompatActivity, val dataset:Mutab
 
 fun openProfile(context:Context,uid:String){
     Intent(context, ProfilePageActivity::class.java).also{
+        it.addFlags(FLAG_ACTIVITY_NEW_TASK)
         it.putExtra("uid",uid)
         context.startActivity(it)
     }

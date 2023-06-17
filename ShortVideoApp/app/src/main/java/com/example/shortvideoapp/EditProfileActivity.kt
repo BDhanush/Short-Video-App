@@ -43,7 +43,7 @@ class EditProfileActivity : AppCompatActivity() {
         setContentView(view)
         val auth=Firebase.auth
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${auth.currentUser!!.uid}")
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 val userMap = dataSnapshot.value as Map<String, Any?>

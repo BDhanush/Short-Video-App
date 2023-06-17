@@ -40,7 +40,7 @@ class DisplayVideoActivity : AppCompatActivity() {
                 post.key=postKey
                 postDataset.add(post)
 
-                val adapter = VideoItemAdapter(this@DisplayVideoActivity,postDataset);
+                val adapter = VideoItemAdapter(applicationContext,postDataset);
                 videosViewPager.adapter = adapter
 
 

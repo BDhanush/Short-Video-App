@@ -61,7 +61,7 @@ class ProfilePageActivity : AppCompatActivity() {
         var user:User?=null
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users")
 
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 if(uid!=auth.currentUser!!.uid){
@@ -117,7 +117,7 @@ class ProfilePageActivity : AppCompatActivity() {
         }
         if(uid!=auth.currentUser!!.uid)
         {
-            database.addListenerForSingleValueEvent(object : ValueEventListener {
+            database.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // Get Post object and use the values to update the UI
 
@@ -171,7 +171,7 @@ class ProfilePageActivity : AppCompatActivity() {
             }
         })
         if(user.profilePicture!=null) {
-            Glide.with(this).load(user.profilePicture!!.toUri())
+            Glide.with(applicationContext).load(user.profilePicture!!.toUri())
                 .into(object : CustomViewTarget<ConstraintLayout, Drawable>(
                     view
                 ) {

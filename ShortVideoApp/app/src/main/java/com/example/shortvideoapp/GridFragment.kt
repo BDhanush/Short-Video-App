@@ -64,7 +64,7 @@ class GridFragment : Fragment() {
                 for(postKey in postKeys){
 
                     val databaseRefPosts=FirebaseDatabase.getInstance(databaseURL).getReference("posts/$postKey")
-                    databaseRefPosts.addListenerForSingleValueEvent(object : ValueEventListener {
+                    databaseRefPosts.addValueEventListener(object : ValueEventListener {
                         @RequiresApi(Build.VERSION_CODES.O)
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
 //                            postDataset.clear()
