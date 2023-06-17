@@ -3,12 +3,14 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <TextView
+        android:padding="8dp"
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="abouttestforscrollfkjsadkvnskdvn "
-        android:textSize="150dp" />
+        tools:text="abouttestforscrollfkjsadkvnskdvn "
+        android:textSize="18dp" />
 
 </androidx.core.widget.NestedScrollView>

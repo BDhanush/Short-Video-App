@@ -42,7 +42,7 @@ data class User(var username:String?=null,var firstName:String?=null,var lastNam
         }catch (e:Exception){
             mutableListOf()
         }
-        about = if(about!=null) map["about"] as String else ""
+        about = if(map["about"]!=null) map["about"] as String else ""
 
     }
     @Exclude

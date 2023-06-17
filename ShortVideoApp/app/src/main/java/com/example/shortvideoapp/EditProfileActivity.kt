@@ -68,7 +68,6 @@ class EditProfileActivity : AppCompatActivity() {
         }
         binding.submit.setOnClickListener {
             if(user.firstName!=binding.firstNameInput.text.toString() || user.lastName!=binding.lastNameInput.text.toString() || user.about!=binding.aboutInput.text.toString() || user.username!=binding.usernameInput.text.toString() || selectedImageUri!=null) {
-                Toast.makeText(this," ${user.firstName!=binding.firstNameInput.text.toString()} || ${user.lastName!=binding.lastNameInput.text.toString()} || ${user.about!=binding.aboutInput.text.toString()} || ${user.username!=binding.usernameInput.toString()} ${selectedImageUri!=null}", Toast.LENGTH_SHORT).show()
 
                 user.firstName=binding.firstNameInput.text.toString()
                 user.lastName=binding.lastNameInput.text.toString()

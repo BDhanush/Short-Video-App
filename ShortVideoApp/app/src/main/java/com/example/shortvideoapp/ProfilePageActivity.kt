@@ -72,6 +72,7 @@ class ProfilePageActivity : AppCompatActivity() {
                 val userMap=dataSnapshot.child(uid!!).value as Map<String,Any?>
                 user= userFromMap(userMap)
                 user!!.uid=uid
+
                 pageBasedOnContext(uid,user!!.about!!,tabs,button,buttonOther)
                 val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
                 val tabsAdapter=ProfileTabAdapter(this@ProfilePageActivity,tabs)

@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "aboutText"
+private const val ARG_PARAM1 = "param1"
 
 /**
  * A simple [Fragment] subclass.
@@ -18,12 +19,12 @@ private const val ARG_PARAM1 = "aboutText"
  */
 class AboutFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var aboutText: String? = null
+    private var param1: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            aboutText = it.getString(ARG_PARAM1)
+            param1 = it.getString(ARG_PARAM1)
         }
     }
 
@@ -38,7 +39,7 @@ class AboutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val about:TextView=view.findViewById(R.id.about)
-        about.text=aboutText
+        about.text=param1
 
     }
 
@@ -56,7 +57,7 @@ class AboutFragment : Fragment() {
         fun <T> newAboutInstance(param1: String) =
             AboutFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, aboutText)
+                    putString(ARG_PARAM1, param1)
                 }
             }
     }
