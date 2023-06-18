@@ -2,10 +2,13 @@ package com.example.shortvideoapp
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
@@ -25,7 +28,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        val action: String? = intent?.action
+        val data: Uri? = intent?.data
+        if(data!=null)
+        {
+            val intent = Intent(this, DisplayVideoActivity::class.java)
+            intent.putExtra("postKey", data.toString().removePrefix("app://shortform/post/"))
+            // Add any other necessary data to the intent
+            startActivity(intent)
+        }
         var auth: FirebaseAuth = Firebase.auth
 
         val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)

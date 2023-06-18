@@ -12,6 +12,7 @@ import android.widget.*
 import android.widget.SeekBar.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -54,6 +55,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val upvoteCount:TextView=view.findViewById(R.id.upvotes)
         val downvoteCount:TextView=view.findViewById(R.id.downvotes)
         val saveButton:CheckBox=view.findViewById(R.id.saveButton)
+        val shareButton:Button=view.findViewById(R.id.shareButton)
 
 
         init{
@@ -238,6 +240,18 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         }
         holder.username.setOnClickListener {
             openProfile(context,item.uid!!)
+        }
+        holder.shareButton.setOnClickListener {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "app://shortform/post/${item.key}")
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null).also {
+                it.addFlags(FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(shareIntent)
         }
 
     }

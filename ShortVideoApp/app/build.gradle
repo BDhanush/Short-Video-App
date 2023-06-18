@@ -59,5 +59,6 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.7'
     implementation 'com.github.AbedElazizShe:LightCompressor:1.2.3'
     implementation 'com.danikula:videocache:2.7.1'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
 }

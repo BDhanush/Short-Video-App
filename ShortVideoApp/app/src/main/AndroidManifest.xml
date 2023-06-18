@@ -30,12 +30,6 @@
             android:theme="@style/Theme.ShortVideoApp"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".UploadActivity"
-            android:exported="false"
-            android:label="@string/title_activity_upload"
-            android:theme="@style/Theme.ShortVideoApp"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".EditProfileActivity"
             android:exported="false"
             android:label="@string/title_activity_edit_profile">
@@ -115,14 +109,20 @@
             android:name=".ProfilePageActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".ProfilePage"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="portrait">
+            <intent-filter android:label="MainActivity">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data android:scheme="app"
+                    android:host="shortform"
+                    android:pathPrefix="/post"/>
+            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
