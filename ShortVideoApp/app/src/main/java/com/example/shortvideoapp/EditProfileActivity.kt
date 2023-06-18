@@ -69,10 +69,10 @@ class EditProfileActivity : AppCompatActivity() {
         binding.submit.setOnClickListener {
             if(user.firstName!=binding.firstNameInput.text.toString() || user.lastName!=binding.lastNameInput.text.toString() || user.about!=binding.aboutInput.text.toString() || user.username!=binding.usernameInput.text.toString() || selectedImageUri!=null) {
 
-                user.firstName=binding.firstNameInput.text.toString()
-                user.lastName=binding.lastNameInput.text.toString()
-                user.username=binding.usernameInput.text.toString()
-                user.about=binding.aboutInput.text.toString()
+                user.firstName=binding.firstNameInput.text.toString().trim()
+                user.lastName=binding.lastNameInput.text.toString().trim()
+                user.username=binding.usernameInput.text.toString().trim()
+                user.about=binding.aboutInput.text.toString().trim()
 
                 updateUser()
             }else {
