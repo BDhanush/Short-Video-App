@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         if(data!=null)
         {
             val intent = Intent(this, DisplayVideoActivity::class.java)
-            intent.putExtra("postKey", data.toString().removePrefix("app://shortform/post/"))
+            intent.putExtra("postKey", data.toString().removePrefix("app://shortform.open/post/"))
             // Add any other necessary data to the intent
             startActivity(intent)
         }
