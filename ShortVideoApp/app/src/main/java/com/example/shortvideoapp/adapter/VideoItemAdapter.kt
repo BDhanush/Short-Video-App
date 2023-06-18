@@ -244,7 +244,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.shareButton.setOnClickListener {
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, "https://shortform.app/post/${item.key}")
+                putExtra(Intent.EXTRA_TEXT, "app://shortform/post/${item.key}")
                 type = "text/plain"
             }
 

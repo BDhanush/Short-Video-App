@@ -119,8 +119,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "example://gizmos” -->
-                <data android:scheme="https"
-                    android:host="shortform.app"
+                <data android:scheme="app"
+                    android:host="shortform"
                     android:pathPrefix="/post"/>
             </intent-filter>
             <meta-data
