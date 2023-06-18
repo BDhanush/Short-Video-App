@@ -120,7 +120,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "example://gizmos” -->
                 <data android:scheme="https"
-                    android:host="shortform"
+                    android:host="shortform.app"
                     android:pathPrefix="/post"/>
             </intent-filter>
             <meta-data
