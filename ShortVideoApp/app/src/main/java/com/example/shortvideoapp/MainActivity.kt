@@ -59,10 +59,10 @@ class MainActivity : AppCompatActivity() {
         readData()
 
         val swipeRefreshLayout:SwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(OnRefreshListener {
+        swipeRefreshLayout.setOnRefreshListener{
             swipeRefreshLayout.isRefreshing = false
             readData()
-        })
+        }
 
 
     }
