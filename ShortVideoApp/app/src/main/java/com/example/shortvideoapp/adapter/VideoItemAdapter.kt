@@ -213,6 +213,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
             database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
         }
+
         val databaseRefUpvotes=database.child("upvotes/${item.key}")
         val databaseRefDownvotes=database.child("downvotes/${item.key}")
         databaseRefUpvotes.addValueEventListener(object : ValueEventListener {
