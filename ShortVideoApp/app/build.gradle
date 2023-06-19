@@ -60,5 +60,6 @@ dependencies {
     implementation 'com.github.AbedElazizShe:LightCompressor:1.2.3'
     implementation 'com.danikula:videocache:2.7.1'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
 }
