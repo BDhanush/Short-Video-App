@@ -190,8 +190,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         holder.videoTitle.text=item.title
         holder.videoDescription.text = item.description
         holder.upvote.setOnClickListener {
-            database.child("posts/${item.key}/upvotes").child(auth.currentUser!!.uid).setValue(true)
-            database.child("posts/${item.key}/downvotes").child(auth.currentUser!!.uid).removeValue()
+            database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
+            database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
 
         }
         database.addValueEventListener(object : ValueEventListener {
@@ -210,17 +210,40 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             }
         })
         holder.downvote.setOnClickListener {
-            database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
-            database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
+            database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
+            database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
         }
         val databaseRefUpvotes=database.child("upvotes/${item.key}")
-        database.addValueEventListener(object : ValueEventListener {
+        val databaseRefDownvotes=database.child("downvotes/${item.key}")
+        databaseRefUpvotes.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                holder.upvoteCount.text=(dataSnapshot.child("upvotes/${item.key}").childrenCount).toString()
-                holder.downvoteCount.text=(dataSnapshot.child("downvotes/${item.key}").childrenCount).toString()
-                holder.username.text=(dataSnapshot.child("users").child(item.uid!!).child("username").value).toString()
-                val profilePicture=(dataSnapshot.child("users").child(item.uid!!).child("profilePicture").value).toString()
+                holder.upvoteCount.text=(dataSnapshot.childrenCount).toString()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+        databaseRefDownvotes.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                holder.downvoteCount.text=(dataSnapshot.childrenCount).toString()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
+        val databaseRefUser=database.child("users")
+        databaseRefUser.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                holder.username.text=(dataSnapshot.child(item.uid!!).child("username").value).toString()
+                val profilePicture=(dataSnapshot.child(item.uid!!).child("profilePicture").value).toString()
                 if(profilePicture!="")
                     Glide.with(context).load(profilePicture.toUri()).into(holder.profilePicture);
 
@@ -233,9 +256,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         })
         holder.saveButton.setOnCheckedChangeListener { checkBox, isChecked ->
             if(isChecked){
-                database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).setValue(true)
+                databaseRefUser.child("${auth.currentUser!!.uid}/savedPosts").child(item.key!!).setValue(true)
             }else{
-                database.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).removeValue()
+                databaseRefUser.child("${auth.currentUser!!.uid}/savedPosts").child(item.key!!).removeValue()
 
             }
         }
