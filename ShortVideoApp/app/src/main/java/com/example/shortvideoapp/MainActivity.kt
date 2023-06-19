@@ -4,12 +4,12 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
 import com.example.shortvideoapp.firebasefunctions.databaseURL
@@ -23,8 +23,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 
+
 class MainActivity : AppCompatActivity() {
     val postDataset= mutableListOf<Post>()
+    lateinit var videosViewPager:ViewPager2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         }
         var auth: FirebaseAuth = Firebase.auth
 
-        val videosViewPager:ViewPager2 = findViewById<ViewPager2>(R.id.viewPagerVideos)
 
 //        val videosURlList= mutableListOf<Post>()
 //        videosURlList.add(Post("https://cdn.discordapp.com/attachments/910134893151911946/1056972395543527474/iam-like-what-he-say-fuck-me-for-50-cent-talking-about-floyd-mayweather-reaction-video-meme-vidownload.mp4",
@@ -53,11 +55,24 @@ class MainActivity : AppCompatActivity() {
 //            postDataset.add(i)
 //        }
 
+        videosViewPager = findViewById(R.id.viewPagerVideos)
+        readData()
+
+        val swipeRefreshLayout:SwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(OnRefreshListener {
+            swipeRefreshLayout.isRefreshing = false
+            readData()
+        })
+
+
+    }
+    fun readData()
+    {
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("posts")
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                //postDataset.clear()
+                postDataset.clear()
                 // Get Post object and use the values to update the UI
                 for(snapshot in dataSnapshot.children) {
                     val postMap=snapshot.value as Map<String,Any?>
@@ -73,7 +88,6 @@ class MainActivity : AppCompatActivity() {
                 val adapter = VideoItemAdapter(applicationContext,postDataset);
                 videosViewPager.adapter = adapter
 
-
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -81,7 +95,5 @@ class MainActivity : AppCompatActivity() {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
-
-
     }
 }
