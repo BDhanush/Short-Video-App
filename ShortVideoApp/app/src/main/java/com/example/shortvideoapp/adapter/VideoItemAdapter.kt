@@ -26,6 +26,7 @@ import com.example.shortvideoapp.firebasefunctions.userFromMap
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
@@ -56,6 +57,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val downvoteCount:TextView=view.findViewById(R.id.downvotes)
         val saveButton:CheckBox=view.findViewById(R.id.saveButton)
         val shareButton:Button=view.findViewById(R.id.shareButton)
+        val progressBar:CircularProgressIndicator=view.findViewById(R.id.progressBar)
 
 
         init{
@@ -78,6 +80,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             videoView.setOnPreparedListener{ mp ->
 
                 shimmerLoading.visibility= GONE
+                progressBar.show()
                 loadedVideo.visibility= VISIBLE
 
                 val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()
@@ -89,6 +92,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                     videoView.scaleY = 1f / scaleX
                 }
                 mp.start()
+                progressBar.hide()
                 mp.isLooping = true
 
 
