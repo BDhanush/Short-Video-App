@@ -51,7 +51,13 @@ class GridFragment : Fragment() {
         val view = binding.root
 
 
-        var database = FirebaseDatabase.getInstance(databaseURL).getReference("users").child("$uid/$type")
+        var database = FirebaseDatabase.getInstance(databaseURL).reference
+        if(type=="savedPosts")
+        {
+            database = database.child("$type/$uid")
+        }else if(type=="posts"){
+            database = database.child("users").child("$uid/$type")
+        }
         val postKeys= mutableListOf<String>()
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.O)

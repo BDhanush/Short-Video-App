@@ -39,13 +39,17 @@ import com.google.firebase.ktx.Firebase
 
 class ProfilePageActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
+    val auth = Firebase.auth
+    var database = FirebaseDatabase.getInstance(databaseURL).getReference("users")
+    var databaseFollowers = FirebaseDatabase.getInstance(databaseURL).getReference("followers")
+    var databaseFollowing = FirebaseDatabase.getInstance(databaseURL).getReference("following")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
-        val auth = Firebase.auth
         val tabs:MutableList<Pair<String,Fragment>> = mutableListOf()
         val button:LinearLayout = findViewById(R.id.buttons)
         val buttonOther:LinearLayout = findViewById(R.id.buttonsOther)
@@ -59,17 +63,29 @@ class ProfilePageActivity : AppCompatActivity() {
         }
 
         var user:User?=null
-        var database = FirebaseDatabase.getInstance(databaseURL).getReference("users")
+
+        if(uid!=auth.currentUser!!.uid)
+        {
+            databaseFollowers.child(uid!!).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    // Get Post object and use the values to update the UI
+                        if(dataSnapshot.child(auth.currentUser!!.uid).exists()){
+                            binding.follow.text="Following"
+                        }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+                }
+            })
+        }
+
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                if(uid!=auth.currentUser!!.uid){
-                    if(dataSnapshot.child(uid!!).child("followers").child(auth.currentUser!!.uid).exists()){
-                        binding.follow.text="Following"
-                    }
-                }
-                val userMap=dataSnapshot.child(uid!!).value as Map<String,Any?>
+                val userMap=dataSnapshot.child(uid).value as Map<String,Any?>
                 user= userFromMap(userMap)
                 user!!.uid=uid
 
@@ -115,35 +131,17 @@ class ProfilePageActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
-        if(uid!=auth.currentUser!!.uid)
-        {
-            database.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    // Get Post object and use the values to update the UI
-
-                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/following").child(auth.currentUser!!.uid).exists()){
-                        binding.follow.text="Following"
-                    }
-
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Getting Post failed, log a message
-                    Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
-                }
-            })
-        }
 
         binding.follow.setOnClickListener {
             if(binding.follow.text=="Follow")
             {
                 binding.follow.text="Following"
-                database.child("$uid/followers").child(auth.currentUser!!.uid).setValue(true)
-                database.child("${auth.currentUser!!.uid}/following").child(uid!!).setValue(true)
+                databaseFollowers.child(uid).child(auth.currentUser!!.uid).setValue(true)
+                databaseFollowing.child(auth.currentUser!!.uid).child(uid).setValue(true)
             }else{
                 binding.follow.text="Follow"
-                database.child("$uid/followers").child(auth.currentUser!!.uid).removeValue()
-                database.child("${auth.currentUser!!.uid}/following").child(uid!!).removeValue()
+                databaseFollowers.child(uid).child(auth.currentUser!!.uid).removeValue()
+                databaseFollowing.child(auth.currentUser!!.uid).child(uid).removeValue()
             }
         }
 
@@ -156,13 +154,36 @@ class ProfilePageActivity : AppCompatActivity() {
 //        binding.textFollowers.text= user.followers.size.toString()
 //        binding.textFollowing.text = user.following.size.toString()
 //        binding.textPosts.text=user.posts.size.toString()
+
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${user.uid}")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                binding.textFollowers.text="Followers: "+(dataSnapshot.child("followers").childrenCount).toString()
-                binding.textFollowing.text="Following: "+(dataSnapshot.child("following").childrenCount).toString()
                 binding.textPosts.text="Posts: "+(dataSnapshot.child("posts").childrenCount).toString()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
+        databaseFollowers.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                binding.textFollowers.text="Followers: "+(dataSnapshot.child(user.uid!!).childrenCount).toString()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
+        databaseFollowing.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                binding.textFollowing.text="Following: "+(dataSnapshot.child(user.uid!!).childrenCount).toString()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

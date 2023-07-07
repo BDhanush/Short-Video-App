@@ -5,24 +5,21 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.util.Log
 import android.media.MediaPlayer
+import android.transition.Slide
+import android.util.Log
 import android.view.*
+import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import android.widget.SeekBar.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Glide.init
-import com.example.shortvideoapp.MainActivity
-import com.example.shortvideoapp.ProfilePageActivity
 import com.danikula.videocache.HttpProxyCacheServer
+import com.example.shortvideoapp.ProfilePageActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.firebasefunctions.databaseURL
-import com.example.shortvideoapp.firebasefunctions.userFromMap
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -36,6 +33,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
     var user:User?=null
     val auth = Firebase.auth
     val database = FirebaseDatabase.getInstance(databaseURL).reference
+    val databaseSavedPosts = FirebaseDatabase.getInstance(databaseURL).getReference("savedPosts")
+
 
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -194,11 +193,11 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
 
         }
-        database.addValueEventListener(object : ValueEventListener {
+        databaseSavedPosts.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 if(item.key!=null)
-                    if(dataSnapshot.child("users/${auth.currentUser!!.uid}/savedPosts").child(item.key!!).exists()){
+                    if(dataSnapshot.child(auth.currentUser!!.uid).child(item.key!!).exists()){
                         holder.saveButton.isChecked=true
                     }
 
@@ -257,9 +256,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         })
         holder.saveButton.setOnCheckedChangeListener { checkBox, isChecked ->
             if(isChecked){
-                databaseRefUser.child("${auth.currentUser!!.uid}/savedPosts").child(item.key!!).setValue(true)
+                databaseSavedPosts.child(auth.currentUser!!.uid).child(item.key!!).setValue(true)
             }else{
-                databaseRefUser.child("${auth.currentUser!!.uid}/savedPosts").child(item.key!!).removeValue()
+                databaseSavedPosts.child(auth.currentUser!!.uid).child(item.key!!).removeValue()
 
             }
         }
@@ -279,6 +278,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             val shareIntent = Intent.createChooser(sendIntent, null).also {
                 it.addFlags(FLAG_ACTIVITY_NEW_TASK)
             }
+
             context.startActivity(shareIntent)
         }
 
