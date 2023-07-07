@@ -56,11 +56,6 @@ class ProfilePageActivity : AppCompatActivity() {
         val uploadButton: Button =findViewById(R.id.btnUpload)
         val uid=intent.getStringExtra("uid")
 
-        //handle upload button click
-        uploadButton.setOnClickListener {
-            //starts the activity that adds a new video
-            startActivity(Intent(this, AddVideoActivity::class.java))
-        }
 
         var user:User?=null
 
@@ -80,7 +75,18 @@ class ProfilePageActivity : AppCompatActivity() {
                 }
             })
         }
-
+        binding.follow.setOnClickListener {
+            if(binding.follow.text=="Follow")
+            {
+                binding.follow.text="Following"
+                databaseFollowers.child(uid).child(auth.currentUser!!.uid).setValue(true)
+                databaseFollowing.child(auth.currentUser!!.uid).child(uid).setValue(true)
+            }else{
+                binding.follow.text="Follow"
+                databaseFollowers.child(uid).child(auth.currentUser!!.uid).removeValue()
+                databaseFollowing.child(auth.currentUser!!.uid).child(uid).removeValue()
+            }
+        }
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -131,19 +137,12 @@ class ProfilePageActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
-
-        binding.follow.setOnClickListener {
-            if(binding.follow.text=="Follow")
-            {
-                binding.follow.text="Following"
-                databaseFollowers.child(uid).child(auth.currentUser!!.uid).setValue(true)
-                databaseFollowing.child(auth.currentUser!!.uid).child(uid).setValue(true)
-            }else{
-                binding.follow.text="Follow"
-                databaseFollowers.child(uid).child(auth.currentUser!!.uid).removeValue()
-                databaseFollowing.child(auth.currentUser!!.uid).child(uid).removeValue()
-            }
+        //handle upload button click
+        binding.btnUpload.setOnClickListener {
+            //starts the activity that adds a new video
+            startActivity(Intent(this, AddVideoActivity::class.java))
         }
+
 
     }
 
