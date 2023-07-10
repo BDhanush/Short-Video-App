@@ -264,6 +264,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             if(isChecked) {
                 databaseRefUpvotes.child(auth.currentUser!!.uid).setValue(true)
                 databaseRefDownvotes.child(auth.currentUser!!.uid).removeValue()
+                holder.upvote.isChecked=true
                 holder.downvote.isChecked=false
             }else{
                 databaseRefUpvotes.child(auth.currentUser!!.uid).removeValue()
@@ -274,6 +275,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             if(isChecked) {
                 databaseRefDownvotes.child(auth.currentUser!!.uid).setValue(true)
                 databaseRefUpvotes.child(auth.currentUser!!.uid).removeValue()
+                holder.downvote.isChecked=true
                 holder.upvote.isChecked=false
 
             }else{
