@@ -152,20 +152,6 @@ class ProfilePageActivity : AppCompatActivity() {
 //        binding.textFollowers.text= user.followers.size.toString()
 //        binding.textFollowing.text = user.following.size.toString()
 //        binding.textPosts.text=user.posts.size.toString()
-
-        var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${user.uid}")
-        database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Get Post object and use the values to update the UI
-                binding.textPosts.text="Posts: "+(dataSnapshot.child("posts").childrenCount).toString()
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Getting Post failed, log a message
-                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
-            }
-        })
-
         databaseFollowers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
@@ -189,6 +175,20 @@ class ProfilePageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+        var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${user.uid}")
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                binding.textPosts.text="Posts: "+(dataSnapshot.child("posts").childrenCount).toString()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
+
         if(user.profilePicture!=null) {
             Glide.with(applicationContext).load(user.profilePicture!!.toUri())
                 .into(object : CustomViewTarget<ConstraintLayout, Drawable>(

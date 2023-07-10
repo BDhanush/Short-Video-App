@@ -54,7 +54,7 @@ class EditProfileActivity : AppCompatActivity() {
                 binding.firstNameInput.setText(user.firstName)
                 binding.lastNameInput.setText(user.lastName)
                 binding.aboutInput.setText(user.about)
-                Glide.with(view)
+                Glide.with(applicationContext)
                     .load(user.profilePicture!!.toUri())
                     .into(binding.profilePicture)
             }

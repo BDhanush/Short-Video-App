@@ -356,7 +356,7 @@ class AddVideoActivity : AppCompatActivity() {
         videoView.setMediaController(mediaController)
 
         //set imageView with default thumbnail
-        Glide.with(this).load(videoUri).into(imageView)
+        Glide.with(applicationContext).load(videoUri).into(imageView)
 
         videoView.setOnPreparedListener { mp ->
             val videoRatio = mp.videoWidth / mp.videoHeight.toFloat()

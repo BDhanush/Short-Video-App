@@ -40,7 +40,7 @@ class DisplayImageActivity : AppCompatActivity() {
         imageView = findViewById(R.id.imageView)
 
         if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(this)
+            Glide.with(applicationContext)
                 .load(imageUrl.toUri())
                 .into(imageView)
         }
