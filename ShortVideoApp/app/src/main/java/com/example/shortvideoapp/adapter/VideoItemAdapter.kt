@@ -50,8 +50,8 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val stats:ConstraintLayout=view.findViewById(R.id.descriptionAndCounts)
         val username:TextView=view.findViewById(R.id.creatorName)
         val profilePicture:ImageView=view.findViewById(R.id.profilePicture)
-        val upvote:Button=view.findViewById(R.id.upvoteButton)
-        val downvote:Button=view.findViewById(R.id.downvoteButton)
+        val upvote:CheckBox=view.findViewById(R.id.upvoteButton)
+        val downvote:CheckBox=view.findViewById(R.id.downvoteButton)
         val upvoteCount:TextView=view.findViewById(R.id.upvotes)
         val downvoteCount:TextView=view.findViewById(R.id.downvotes)
         val saveButton:CheckBox=view.findViewById(R.id.saveButton)
@@ -188,11 +188,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
         holder.videoTitle.text=item.title
         holder.videoDescription.text = item.description
-        holder.upvote.setOnClickListener {
-            database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
-            database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
 
-        }
         databaseSavedPosts.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
@@ -208,13 +204,39 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
-        holder.downvote.setOnClickListener {
-            database.child("downvotes/${item.key}").child(auth.currentUser!!.uid).setValue(true)
-            database.child("upvotes/${item.key}").child(auth.currentUser!!.uid).removeValue()
-        }
 
         val databaseRefUpvotes=database.child("upvotes/${item.key}")
         val databaseRefDownvotes=database.child("downvotes/${item.key}")
+        databaseRefUpvotes.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                if(item.key!=null)
+                    if(dataSnapshot.child(auth.currentUser!!.uid).exists()){
+                        holder.upvote.isChecked=true
+                    }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+        databaseRefDownvotes.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                if(item.key!=null)
+                    if(dataSnapshot.child(auth.currentUser!!.uid).exists()){
+                        holder.downvote.isChecked=true
+                    }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
         databaseRefUpvotes.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
@@ -237,6 +259,28 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+
+        holder.upvote.setOnCheckedChangeListener { checkBox, isChecked ->
+            if(isChecked) {
+                databaseRefUpvotes.child(auth.currentUser!!.uid).setValue(true)
+                databaseRefDownvotes.child(auth.currentUser!!.uid).removeValue()
+                holder.downvote.isChecked=false
+            }else{
+                databaseRefUpvotes.child(auth.currentUser!!.uid).removeValue()
+            }
+
+        }
+        holder.downvote.setOnCheckedChangeListener { checkBox, isChecked ->
+            if(isChecked) {
+                databaseRefDownvotes.child(auth.currentUser!!.uid).setValue(true)
+                databaseRefUpvotes.child(auth.currentUser!!.uid).removeValue()
+                holder.upvote.isChecked=false
+
+            }else{
+                databaseRefDownvotes.child(auth.currentUser!!.uid).removeValue()
+
+            }
+        }
 
         val databaseRefUser=database.child("users")
         databaseRefUser.addValueEventListener(object : ValueEventListener {

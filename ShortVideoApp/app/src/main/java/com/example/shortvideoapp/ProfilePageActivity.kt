@@ -56,7 +56,6 @@ class ProfilePageActivity : AppCompatActivity() {
         val uploadButton: Button =findViewById(R.id.btnUpload)
         val uid=intent.getStringExtra("uid")
 
-
         var user:User?=null
 
         if(uid!=auth.currentUser!!.uid)
