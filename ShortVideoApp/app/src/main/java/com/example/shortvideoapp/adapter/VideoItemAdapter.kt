@@ -211,9 +211,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 if(item.key!=null)
-                    if(dataSnapshot.child(auth.currentUser!!.uid).exists()){
-                        holder.upvote.isChecked=true
-                    }
+                    holder.upvote.isChecked = dataSnapshot.child(auth.currentUser!!.uid).exists()
 
             }
 
@@ -226,9 +224,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
                 if(item.key!=null)
-                    if(dataSnapshot.child(auth.currentUser!!.uid).exists()){
-                        holder.downvote.isChecked=true
-                    }
+                    holder.downvote.isChecked = dataSnapshot.child(auth.currentUser!!.uid).exists()
 
             }
 
