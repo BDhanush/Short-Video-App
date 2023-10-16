@@ -17,6 +17,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.danikula.videocache.HttpProxyCacheServer
+import com.example.shortvideoapp.CommentsActivity
 import com.example.shortvideoapp.ProfilePageActivity
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.firebasefunctions.databaseURL
@@ -57,6 +58,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val saveButton:CheckBox=view.findViewById(R.id.saveButton)
         val shareButton:Button=view.findViewById(R.id.shareButton)
         val progressBar:CircularProgressIndicator=view.findViewById(R.id.progressBar)
+        val commentsButton:Button=view.findViewById(R.id.commentsButton)
 
 
         init{
@@ -304,6 +306,14 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
             }
         }
+//        holder.saveButton.setOnClickListener {it as CheckBox
+//            if(it.isChecked)
+//            {
+//                Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+//            }else{
+//                Toast.makeText(context, "Unsaved", Toast.LENGTH_SHORT).show()
+//            }
+//        }
         holder.profilePicture.setOnClickListener {
             openProfile(context,item.uid!!)
         }
@@ -322,6 +332,12 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             }
 
             context.startActivity(shareIntent)
+        }
+        holder.commentsButton.setOnClickListener {
+            val intent = Intent(holder.itemView.context, CommentsActivity::class.java)
+            intent.putExtra("postKey", item.key)
+            holder.itemView.context.startActivity(intent)
+
         }
 
     }
