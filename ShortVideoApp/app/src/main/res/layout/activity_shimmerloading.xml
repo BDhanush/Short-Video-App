@@ -5,12 +5,25 @@
     android:layout_height="match_parent">
 
 
+<!--    <TextView-->
+<!--        android:id="@+id/moreButton"-->
+
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:background="@drawable/more"-->
+
+
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginRight="5dp" />-->
     <TextView
-        android:id="@+id/moreButton"
+        android:id="@+id/searchButton"
 
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/more"
+        android:background="@drawable/baseline_search_24"
 
 
         app:layout_constraintTop_toTopOf="parent"
@@ -138,7 +151,7 @@
         android:background="@color/shimmer"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/moreButton"
+        app:layout_constraintRight_toLeftOf="@id/searchButton"
         android:layout_marginRight="5dp"
 
 
