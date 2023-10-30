@@ -50,22 +50,21 @@ class ProfilePageActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val tabs:MutableList<Pair<String,Fragment>> = mutableListOf()
-        val button:LinearLayout = findViewById(R.id.buttons)
-        val buttonOther:LinearLayout = findViewById(R.id.buttonsOther)
-        val uploadButton: Button =findViewById(R.id.btnUpload)
-        val uid=intent.getStringExtra("uid")
+        val tabs: MutableList<Pair<String, Fragment>> = mutableListOf()
+        val button: LinearLayout = findViewById(R.id.buttons)
+        val buttonOther: LinearLayout = findViewById(R.id.buttonsOther)
+        val uploadButton: Button = findViewById(R.id.btnUpload)
+        val uid = intent.getStringExtra("uid")
 
-        var user:User?=null
+        var user: User? = null
 
-        if(uid!=auth.currentUser!!.uid)
-        {
+        if (uid != auth.currentUser!!.uid) {
             databaseFollowers.child(uid!!).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // Get Post object and use the values to update the UI
-                        if(dataSnapshot.child(auth.currentUser!!.uid).exists()){
-                            binding.follow.text="Following"
-                        }
+                    if (dataSnapshot.child(auth.currentUser!!.uid).exists()) {
+                        binding.follow.text = "Following"
+                    }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -75,13 +74,12 @@ class ProfilePageActivity : AppCompatActivity() {
             })
         }
         binding.follow.setOnClickListener {
-            if(binding.follow.text=="Follow")
-            {
-                binding.follow.text="Following"
+            if (binding.follow.text == "Follow") {
+                binding.follow.text = "Following"
                 databaseFollowers.child(uid).child(auth.currentUser!!.uid).setValue(true)
                 databaseFollowing.child(auth.currentUser!!.uid).child(uid).setValue(true)
-            }else{
-                binding.follow.text="Follow"
+            } else {
+                binding.follow.text = "Follow"
                 databaseFollowers.child(uid).child(auth.currentUser!!.uid).removeValue()
                 databaseFollowing.child(auth.currentUser!!.uid).child(uid).removeValue()
             }
@@ -90,34 +88,37 @@ class ProfilePageActivity : AppCompatActivity() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                val userMap=dataSnapshot.child(uid).value as Map<String,Any?>
-                user= userFromMap(userMap)
-                user!!.uid=uid
+                val userMap = dataSnapshot.child(uid).value as? Map<String, Any?>
 
-                pageBasedOnContext(uid,user!!.about!!,tabs,button,buttonOther)
-                val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
-                val tabsAdapter=ProfileTabAdapter(this@ProfilePageActivity,tabs)
-                val tabLayout: TabLayout= findViewById(R.id.tabLayout)
-                tabsViewPager.adapter=tabsAdapter
-                TabLayoutMediator(tabLayout,tabsViewPager) {tab,position->
-                    tab.text=tabs[position].first
-                }.attach()
+                if (userMap != null) {
+                    user = userFromMap(userMap)
+                    user!!.uid = uid
 
-                tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
-                    override fun onTabReselected(tab: TabLayout.Tab?) {
+                    pageBasedOnContext(uid, user!!.about!!, tabs, button, buttonOther)
+                    val tabsViewPager: ViewPager2 = findViewById(R.id.viewPager)
+                    val tabsAdapter = ProfileTabAdapter(this@ProfilePageActivity, tabs)
+                    val tabLayout: TabLayout = findViewById(R.id.tabLayout)
+                    tabsViewPager.adapter = tabsAdapter
+                    TabLayoutMediator(tabLayout, tabsViewPager) { tab, position ->
+                        tab.text = tabs[position].first
+                    }.attach()
 
-                    }
+                    tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                        override fun onTabReselected(tab: TabLayout.Tab?) {
+                            // Handle tab reselected
+                        }
 
-                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        override fun onTabSelected(tab: TabLayout.Tab?) {
+                            // Handle tab selected
+                        }
 
-                    }
+                        override fun onTabUnselected(tab: TabLayout.Tab?) {
+                            // Handle tab unselected
+                        }
+                    })
 
-                    override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-                    }
-                })
-
-                updateData(user!!,view)
+                    updateData(user!!, view)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -125,37 +126,32 @@ class ProfilePageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+
         binding.profileImage.setOnClickListener {
             val intent = Intent(this, DisplayImageActivity::class.java)
-            intent.putExtra("imageUrl", user?.profilePicture?:"")
-
+            intent.putExtra("imageUrl", user?.profilePicture ?: "")
             startActivity(intent)
         }
         binding.btnEditProfile.setOnClickListener {
-            Intent(this, EditProfileActivity::class.java).also{
+            Intent(this, EditProfileActivity::class.java).also {
                 startActivity(it)
             }
         }
-        //handle upload button click
+        // Handle upload button click
         binding.btnUpload.setOnClickListener {
-            //starts the activity that adds a new video
+            // Start the activity that adds a new video
             startActivity(Intent(this, AddVideoActivity::class.java))
         }
-
-
     }
 
-    fun updateData(user:User,view: ConstraintLayout){
+    fun updateData(user: User, view: ConstraintLayout) {
+        binding.profileName.text = user.firstName.toString() + " " + user.lastName.toString()
+        binding.collapsingToolbar.title = user.username.toString()
 
-        binding.profileName.text=user.firstName.toString()+" "+user.lastName.toString()
-        binding.collapsingToolbar.title=user.username.toString()
-//        binding.textFollowers.text= user.followers.size.toString()
-//        binding.textFollowing.text = user.following.size.toString()
-//        binding.textPosts.text=user.posts.size.toString()
         databaseFollowers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                binding.textFollowers.text="Followers: "+(dataSnapshot.child(user.uid!!).childrenCount).toString()
+                binding.textFollowers.text = "Followers: " + (dataSnapshot.child(user.uid!!).childrenCount).toString()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -167,7 +163,7 @@ class ProfilePageActivity : AppCompatActivity() {
         databaseFollowing.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                binding.textFollowing.text="Following: "+(dataSnapshot.child(user.uid!!).childrenCount).toString()
+                binding.textFollowing.text = "Following: " + (dataSnapshot.child(user.uid!!).childrenCount).toString()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -175,11 +171,12 @@ class ProfilePageActivity : AppCompatActivity() {
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${user.uid}")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Get Post object and use the values to update the UI
-                binding.textPosts.text="Posts: "+(dataSnapshot.child("posts").childrenCount).toString()
+                binding.textPosts.text = "Posts: " + (dataSnapshot.child("posts").childrenCount).toString()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -188,18 +185,17 @@ class ProfilePageActivity : AppCompatActivity() {
             }
         })
 
-
-        if(user.profilePicture!=null) {
+        if (user.profilePicture != null) {
             Glide.with(applicationContext).load(user.profilePicture!!.toUri())
                 .into(object : CustomViewTarget<ConstraintLayout, Drawable>(
                     view
                 ) {
                     override fun onLoadFailed(errorDrawable: Drawable?) {
-                        // error handling
+                        // Error handling
                     }
 
                     override fun onResourceCleared(placeholder: Drawable?) {
-                        // clear all resources
+                        // Clear all resources
                     }
 
                     override fun onResourceReady(
@@ -213,26 +209,23 @@ class ProfilePageActivity : AppCompatActivity() {
                             it?.let { palette ->
                                 val dominantColor = palette.getDominantColor(Color.LTGRAY)
 
-//                                binding.collapsingToolbar.setBackgroundColor(dominantColor)
-                                binding.collapsingToolbar.setStatusBarScrimColor(dominantColor);
-                                binding.collapsingToolbar.setContentScrimColor(dominantColor);
+                                binding.collapsingToolbar.setStatusBarScrimColor(dominantColor)
+                                binding.collapsingToolbar.setContentScrimColor(dominantColor)
 
                                 var hsv = FloatArray(3)
-                                Color.colorToHSV(dominantColor,hsv);
+                                Color.colorToHSV(dominantColor, hsv)
 
-                                val brightness = hsv[2];
+                                val brightness = hsv[2]
 
                                 if (brightness < 0.5) {
                                     binding.collapsingToolbar.setCollapsedTitleTextColor(Color.WHITE)
                                 } else {
                                     binding.collapsingToolbar.setCollapsedTitleTextColor(Color.BLACK)
                                 }
-
                             }
                         }
                     }
                 })
         }
     }
-
 }

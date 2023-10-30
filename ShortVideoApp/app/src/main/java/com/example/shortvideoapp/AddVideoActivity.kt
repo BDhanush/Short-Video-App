@@ -55,6 +55,8 @@ class AddVideoActivity : AppCompatActivity() {
 
     private var title:String = ""
     private var description:String = ""
+    private var tagsText:String = ""
+    private var tagsList: List<String> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,8 +81,12 @@ class AddVideoActivity : AppCompatActivity() {
             //get title
             val titleEnter:EditText=findViewById(R.id.videoTitleInput)
             val descriptionEnter:EditText=findViewById(R.id.descriptionInput)
+            val tagsInput:EditText=findViewById(R.id.tagsInput)
             title = titleEnter.text.toString().trim()
             description = descriptionEnter.text.toString().trim()
+            tagsText = tagsInput.text.toString().trim()
+
+
             if (TextUtils.isEmpty(title)) {
                 //no title entered
                 Toast.makeText(this, "Title is required", Toast.LENGTH_SHORT).show()
@@ -228,7 +234,8 @@ class AddVideoActivity : AppCompatActivity() {
                                                 "$downloadThumbnailUrl",
                                                 auth.currentUser!!.uid,
                                                 title,
-                                                description
+                                                description,
+                                                tagsText
                                             )
 
                                             //put details into Database

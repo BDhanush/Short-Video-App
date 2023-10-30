@@ -119,6 +119,22 @@
                 android:inputType="textPersonName|textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
 
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:id="@+id/tagsLayout"-->
+<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="8dp"-->
+<!--            android:hint="Add Tags"-->
+<!--            >-->
+
+<!--            <com.google.android.material.textfield.TextInputEditText-->
+<!--                android:id="@+id/tagsInput"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:inputType="textPersonName|textCapSentences" />-->
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/descriptionLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -134,6 +150,21 @@
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tagsLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:hint="@string/tags_comma_separated">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tagsInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <Button
             android:layout_margin="8dp"

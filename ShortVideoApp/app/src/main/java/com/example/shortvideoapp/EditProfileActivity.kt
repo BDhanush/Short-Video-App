@@ -33,69 +33,77 @@ import com.google.firebase.storage.ktx.storage
 
 class EditProfileActivity : AppCompatActivity() {
     lateinit var user: User
-    val SELECT_IMAGE=200
-    var selectedImageUri: Uri?=null
+    val SELECT_IMAGE = 200
+    var selectedImageUri: Uri? = null
     private lateinit var binding: ActivityEditProfileBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val auth=Firebase.auth
+        val auth = Firebase.auth
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("users/${auth.currentUser!!.uid}")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Get Post object and use the values to update the UI
-                val userMap = dataSnapshot.value as Map<String, Any?>
-                user = userFromMap(userMap)
+                val userMap = dataSnapshot.value as? Map<String, Any?>
 
-                user.uid = auth.currentUser!!.uid
-                binding.usernameInput.setText(user.username)
-                binding.firstNameInput.setText(user.firstName)
-                binding.lastNameInput.setText(user.lastName)
-                binding.aboutInput.setText(user.about)
-                Glide.with(applicationContext)
-                    .load(user.profilePicture!!.toUri())
-                    .into(binding.profilePicture)
+                if (userMap != null) {
+                    user = userFromMap(userMap)
+                    user.uid = auth.currentUser!!.uid
+                    binding.usernameInput.setText(user.username)
+                    binding.firstNameInput.setText(user.firstName)
+                    binding.lastNameInput.setText(user.lastName)
+                    binding.aboutInput.setText(user.about)
+
+                    if (user.profilePicture != null) {
+                        Glide.with(applicationContext)
+                            .load(user.profilePicture!!.toUri())
+                            .into(binding.profilePicture)
+                    }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                // Handle onCancelled event
+                // You may want to provide error handling here
             }
         })
-        binding.editImage.setOnClickListener {
-            addimage()
-        }
-        binding.submit.setOnClickListener {
-            if(user.firstName!=binding.firstNameInput.text.toString() || user.lastName!=binding.lastNameInput.text.toString() || user.about!=binding.aboutInput.text.toString() || user.username!=binding.usernameInput.text.toString() || selectedImageUri!=null) {
 
-                user.firstName=binding.firstNameInput.text.toString().trim()
-                user.lastName=binding.lastNameInput.text.toString().trim()
-                user.username=binding.usernameInput.text.toString().trim()
-                user.about=binding.aboutInput.text.toString().trim()
+        binding.editImage.setOnClickListener {
+            addImage()
+        }
+
+        binding.submit.setOnClickListener {
+            if (user.firstName != binding.firstNameInput.text.toString() ||
+                user.lastName != binding.lastNameInput.text.toString() ||
+                user.about != binding.aboutInput.text.toString() ||
+                user.username != binding.usernameInput.text.toString() ||
+                selectedImageUri != null
+            ) {
+                user.firstName = binding.firstNameInput.text.toString().trim()
+                user.lastName = binding.lastNameInput.text.toString().trim()
+                user.username = binding.usernameInput.text.toString().trim()
+                user.about = binding.aboutInput.text.toString().trim()
 
                 updateUser()
-            }else {
+            } else {
                 Toast.makeText(this, "No Updates", Toast.LENGTH_SHORT).show()
             }
-
         }
-
     }
-    private fun updateUser()
-    {
-        val submit:Button=findViewById(R.id.submit)
-        val progressBarUpdate:CircularProgressIndicator=findViewById(R.id.progressBarUpdate)
-        submit.isEnabled=false
 
-        submit.text="Updating"
+    private fun updateUser() {
+        val submit: Button = findViewById(R.id.submit)
+        val progressBarUpdate: CircularProgressIndicator = findViewById(R.id.progressBarUpdate)
+        submit.isEnabled = false
+
+        submit.text = "Updating"
         progressBarUpdate.show()
         val database = FirebaseDatabase.getInstance(databaseURL).reference
 
-        if(selectedImageUri!=null)
-        {
-            val storageRef=Firebase.storage
-
+        if (selectedImageUri != null) {
+            val storageRef = Firebase.storage
             val ref = storageRef.reference.child("images/${user.uid}/profilePicture")
             val uploadTask = ref.putFile(selectedImageUri!!)
 
@@ -109,62 +117,46 @@ class EditProfileActivity : AppCompatActivity() {
             }.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val downloadUri = task.result
-                    user.profilePicture=downloadUri.toString()
-                    val updates=user.toMap()
+                    user.profilePicture = downloadUri.toString()
+                    val updates = user.toMap()
 
-                    database.child("users").child(user.uid!!).updateChildren(updates).addOnSuccessListener {
-                        submit.isEnabled=true
-                        submit.text="Update"
-                        progressBarUpdate.hide()
-                    }
-                    Toast.makeText(this,"Profile Updated", Toast.LENGTH_SHORT).show()
+                    database.child("users").child(user.uid!!).updateChildren(updates)
+                        .addOnSuccessListener {
+                            submit.isEnabled = true
+                            submit.text = "Update"
+                            progressBarUpdate.hide()
+                        }
+                    Toast.makeText(this, "Profile Updated", Toast.LENGTH_SHORT).show()
                 }
             }
-        }else{
-            val updates=user.toMap()
+        } else {
+            val updates = user.toMap()
 
-            database.child("users").child(user.uid!!).updateChildren(updates).addOnSuccessListener {
-                submit.isEnabled=true
-                submit.text="Update"
-                progressBarUpdate.hide()
-            }
-            Toast.makeText(this,"Profile Updated", Toast.LENGTH_SHORT).show()
+            database.child("users").child(user.uid!!).updateChildren(updates)
+                .addOnSuccessListener {
+                    submit.isEnabled = true
+                    submit.text = "Update"
+                    progressBarUpdate.hide()
+                }
+            Toast.makeText(this, "Profile Updated", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
-    private fun addimage() {
+    private fun addImage() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
 
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE)
     }
 
     @SuppressLint("Range")
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode== Activity.RESULT_OK && requestCode==SELECT_IMAGE)
-        {
-            selectedImageUri=data!!.data
+        if (resultCode == Activity.RESULT_OK && requestCode == SELECT_IMAGE) {
+            selectedImageUri = data!!.data
             binding.profilePicture.setImageURI(selectedImageUri)
         }
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
