@@ -55,9 +55,8 @@ class AddVideoActivity : AppCompatActivity() {
 
     private var title:String = ""
     private var description:String = ""
-    private var tagsText:String = ""
-    private var tagsList: List<String> = emptyList()
-
+    private var tags:String = ""
+    private var tagsList: MutableList<String> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_video)
@@ -81,11 +80,11 @@ class AddVideoActivity : AppCompatActivity() {
             //get title
             val titleEnter:EditText=findViewById(R.id.videoTitleInput)
             val descriptionEnter:EditText=findViewById(R.id.descriptionInput)
-            val tagsInput:EditText=findViewById(R.id.tagsInput)
+            val tagsEnter:EditText=findViewById(R.id.tagsInput)
             title = titleEnter.text.toString().trim()
             description = descriptionEnter.text.toString().trim()
-            tagsText = tagsInput.text.toString().trim()
-
+            tags = tagsEnter.text.toString().trim()
+            tagsList = tags.split(",").map { it.trim() }.toMutableList()
 
             if (TextUtils.isEmpty(title)) {
                 //no title entered
@@ -220,6 +219,7 @@ class AddVideoActivity : AppCompatActivity() {
                                 val baos = ByteArrayOutputStream()
                                 thumbnail?.compress(Bitmap.CompressFormat.JPEG, 50, baos)
                                 val videoThumbnail = baos.toByteArray()
+
                                 //upload thumbnail to firebase
                                 storageReferenceThumbnail.putBytes(videoThumbnail)
                                     .addOnSuccessListener {thumbnailTaskSnapshot ->
@@ -235,7 +235,7 @@ class AddVideoActivity : AppCompatActivity() {
                                                 auth.currentUser!!.uid,
                                                 title,
                                                 description,
-                                                tagsText
+                                                tagsList
                                             )
 
                                             //put details into Database
