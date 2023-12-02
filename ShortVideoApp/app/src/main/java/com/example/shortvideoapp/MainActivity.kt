@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this@MainActivity, AddVideoActivity::class.java))
                 }
 
-                val adapter = VideoItemAdapter(applicationContext,postDataset);
+                val adapter = VideoItemAdapter(applicationContext,postDataset, MULTIPLE_POST);
                 videosViewPager.adapter = adapter
 
             }

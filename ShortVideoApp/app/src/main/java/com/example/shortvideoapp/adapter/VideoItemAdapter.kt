@@ -29,14 +29,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 
-class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>, val type:Int): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     var user:User?=null
     val auth = Firebase.auth
     val database = FirebaseDatabase.getInstance(databaseURL).reference
     val databaseSavedPosts = FirebaseDatabase.getInstance(databaseURL).getReference("savedPosts")
-    var videoIndex:Int=0
-
 
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -185,7 +183,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
-        videoIndex=position
 
         val PRELOAD_VIDEO_COUNT = 3;
         val nextVideos = dataset.subList(position + 1, minOf(position + 1 + PRELOAD_VIDEO_COUNT, dataset.size))
@@ -347,7 +344,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             holder.itemView.context.startActivity(intent)
 
         }
-        if(position==itemCount-1)
+        if(type== MULTIPLE_POST && position==itemCount-1)
         {
             readMore(getLastPostKey());
         }
@@ -357,12 +354,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
      * Return the size of your dataset (invoked by the layout manager)
      */ override fun getItemCount() = dataset.size
 
-    fun isLastPost():Boolean
-    {
-        return videoIndex==itemCount-1
-    }
-
-    fun getLastPostKey():String
+    private fun getLastPostKey():String
     {
         return dataset.last().key as String
     }
@@ -392,7 +384,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
-//        notifyDataSetChanged()
     }
 }
 
