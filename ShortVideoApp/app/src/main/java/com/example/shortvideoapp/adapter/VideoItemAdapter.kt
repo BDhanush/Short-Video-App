@@ -17,8 +17,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.danikula.videocache.HttpProxyCacheServer
-import com.example.shortvideoapp.CommentsActivity
-import com.example.shortvideoapp.ProfilePageActivity
+import com.example.shortvideoapp.*
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
@@ -59,9 +58,15 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val shareButton:Button=view.findViewById(R.id.shareButton)
         val progressBar:CircularProgressIndicator=view.findViewById(R.id.progressBar)
         val commentsButton:Button=view.findViewById(R.id.commentsButton)
+        val searchButton:Button=view.findViewById(R.id.searchButton)
 
 
         init{
+            searchButton.setOnClickListener {
+                val intent=Intent(context, SearchActivity::class.java)
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            }
             videoTitle.setOnClickListener {
                 stats.visibility= if(stats.visibility == GONE) {
                     videoTitle.maxLines= Int.MAX_VALUE
