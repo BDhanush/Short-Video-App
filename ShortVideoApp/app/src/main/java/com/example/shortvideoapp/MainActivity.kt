@@ -9,7 +9,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shortvideoapp.adapter.VideoItemAdapter
 import com.example.shortvideoapp.firebasefunctions.databaseURL
@@ -64,11 +63,10 @@ class MainActivity : AppCompatActivity() {
             readData()
         }
 
-
     }
     fun readData()
     {
-        var database = FirebaseDatabase.getInstance(databaseURL).getReference("posts")
+        var database = FirebaseDatabase.getInstance(databaseURL).getReference("posts").limitToFirst(6)
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
