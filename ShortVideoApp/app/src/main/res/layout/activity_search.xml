@@ -20,10 +20,23 @@
         android:layout_width="match_parent"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
         android:hint="@string/search_hint"
         />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchBar">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
