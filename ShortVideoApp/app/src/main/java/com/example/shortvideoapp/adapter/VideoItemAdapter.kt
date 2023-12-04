@@ -6,12 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.media.MediaPlayer
-import android.transition.Slide
+import android.os.Build
 import android.util.Log
 import android.view.*
-import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import android.widget.SeekBar.*
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +20,7 @@ import com.danikula.videocache.HttpProxyCacheServer
 import com.example.shortvideoapp.*
 import com.example.shortvideoapp.R
 import com.example.shortvideoapp.firebasefunctions.databaseURL
+import com.example.shortvideoapp.firebasefunctions.postFromMap
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -28,13 +29,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 
-class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
+class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>, val type:Int): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
     var user:User?=null
     val auth = Firebase.auth
     val database = FirebaseDatabase.getInstance(databaseURL).reference
     val databaseSavedPosts = FirebaseDatabase.getInstance(databaseURL).getReference("savedPosts")
-
 
     @SuppressLint("ClickableViewAccessibility")
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -344,11 +344,47 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             holder.itemView.context.startActivity(intent)
 
         }
+        if(type== MULTIPLE_POST && position==itemCount-1)
+        {
+            readMore(getLastPostKey());
+        }
 
     }
     /**
      * Return the size of your dataset (invoked by the layout manager)
      */ override fun getItemCount() = dataset.size
+
+    private fun getLastPostKey():String
+    {
+        return dataset.last().key as String
+    }
+    fun addPost(post:Post)
+    {
+        dataset.add(post)
+        notifyDataSetChanged()
+    }
+
+    fun readMore(lastPost:String)
+    {
+        var database = FirebaseDatabase.getInstance(databaseURL).getReference().child("posts").orderByKey().startAfter(lastPost).limitToFirst(3);
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                for(snapshot in dataSnapshot.children) {
+                    val postMap=snapshot.value as Map<String,Any?>
+                    val post= postFromMap(postMap)
+                    post.key=snapshot.key as String
+                    addPost(post)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+    }
 }
 
 fun openProfile(context:Context,uid:String){
