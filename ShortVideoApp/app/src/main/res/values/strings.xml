@@ -25,4 +25,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="commentHint">Comment</string>
     <string name="search_hint">Search</string>
+    <string name="tags_comma_separated" />
 </resources>

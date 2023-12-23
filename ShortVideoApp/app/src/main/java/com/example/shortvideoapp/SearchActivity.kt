@@ -5,11 +5,16 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
+import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.shortvideoapp.adapter.SearchAdapter
 import com.example.shortvideoapp.databinding.ActivitySearchBinding
 import com.example.shortvideoapp.firebasefunctions.databaseURL
@@ -26,6 +31,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
 
     val postDataset= mutableListOf<Post>()
+    lateinit var adapter:SearchAdapter
+    lateinit var searchRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +50,40 @@ class SearchActivity : AppCompatActivity() {
         val adapter= SearchAdapter(this,list);
         val layoutManager = GridLayoutManager(this,2);
 
+        searchRecyclerView = binding.searchRecyclerView // Initialize searchRecyclerView
+        searchRecyclerView.layoutManager = layoutManager
+        searchRecyclerView.adapter = adapter
+
         binding.searchRecyclerView.setLayoutManager(layoutManager);
         binding.searchRecyclerView.setAdapter(adapter);
         readData()
+        searchView.editText.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+                // TODO Auto-generated method stub
+            }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun afterTextChanged(s: Editable) {
+                // filter your list from your input
+                filter(s.toString())
+                //you can use runnable postDelayed like 500 ms to delay search text
+            }
+        })
+
+        searchView.editText.setOnEditorActionListener { v: TextView?, actionId: Int, event: KeyEvent? ->
+            searchBar.text = searchView.text
+            searchView.hide()
+            false
+        }
+
 
     }
+
     fun readData()
     {
         var database = FirebaseDatabase.getInstance(databaseURL).getReference("posts")
@@ -75,6 +111,38 @@ class SearchActivity : AppCompatActivity() {
             override fun onCancelled(databaseError: DatabaseError) {
                 // Getting Post failed, log a message
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+    }
+    private fun filter(searchPrefix: String) {
+        val database = FirebaseDatabase.getInstance(databaseURL).getReference("posts")
+        val query = database.orderByChild("title")
+            .startAt(searchPrefix).endAt(searchPrefix + "\uf8ff")
+
+//        val start = searchPrefix.lowercase()
+//        val end = searchPrefix.lowercase() + "\uf8ff"
+//        val queryPath = "posts/orderByChild=title&startAt=$start&endAt=$end"
+//
+//        Log.d("SearchActivity", "Query: $queryPath") // Print the query
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val filteredList = mutableListOf<Post>()
+
+                for (snapshot in dataSnapshot.children) {
+                    val postMap = snapshot.value as Map<String, Any?>
+                    val post = postFromMap(postMap)
+                    post.key = snapshot.key as String
+                    filteredList.add(post)
+                }
+                Log.d("SearchActivity", "Filtered List: $filteredList") // Print the query
+
+                adapter = SearchAdapter(applicationContext, filteredList)
+                searchRecyclerView.adapter = adapter
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("SearchActivity", "Firebase search cancelled: ${databaseError.message}")
             }
         })
     }

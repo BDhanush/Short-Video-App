@@ -9,10 +9,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io'}
         mavenCentral() {
             content {
                 includeModule("com.danikula", "videocache")
+                includeGroup("com.jillesvangurp")
             }
         }
     }

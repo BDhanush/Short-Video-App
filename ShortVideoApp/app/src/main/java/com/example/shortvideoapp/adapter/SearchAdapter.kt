@@ -1,22 +1,12 @@
 package com.example.shortvideoapp.adapter
 
-import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shortvideoapp.R
-import com.example.shortvideoapp.firebasefunctions.databaseURL
-import com.example.shortvideoapp.model.Comment
 import com.example.shortvideoapp.model.Post
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import java.text.SimpleDateFormat
 
 class SearchAdapter(context: Context, var dataset:MutableList<Post>): RecyclerView.Adapter<SearchAdapter.ItemViewHolder>()
 {
