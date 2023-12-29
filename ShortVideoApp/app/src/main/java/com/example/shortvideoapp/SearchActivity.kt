@@ -116,16 +116,7 @@ class SearchActivity : AppCompatActivity() {
     }
     private fun filter(searchPrefix: String) {
         val database = FirebaseDatabase.getInstance(databaseURL).getReference("posts")
-        val query = database.orderByChild("title")
-            .startAt(searchPrefix).endAt(searchPrefix + "\uf8ff")
-
-//        val start = searchPrefix.lowercase()
-//        val end = searchPrefix.lowercase() + "\uf8ff"
-//        val queryPath = "posts/orderByChild=title&startAt=$start&endAt=$end"
-//
-//        Log.d("SearchActivity", "Query: $queryPath") // Print the query
-
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val filteredList = mutableListOf<Post>()
 
@@ -133,9 +124,20 @@ class SearchActivity : AppCompatActivity() {
                     val postMap = snapshot.value as Map<String, Any?>
                     val post = postFromMap(postMap)
                     post.key = snapshot.key as String
-                    filteredList.add(post)
+
+                    if (post.title?.contains(searchPrefix, ignoreCase = true) == true ||
+                        post.tags?.contains(searchPrefix, ignoreCase = true) == true) {
+                        filteredList.add(post)
+                    } else {
+                        val tags = post.tags?.split(",")?.map { it.trim() } ?: listOf()
+                        for (tag in tags) {
+                            if (tag.contains(searchPrefix, ignoreCase = true)) {
+                                filteredList.add(post)
+                                break
+                            }
+                        }
+                    }
                 }
-                Log.d("SearchActivity", "Filtered List: $filteredList") // Print the query
 
                 adapter = SearchAdapter(applicationContext, filteredList)
                 searchRecyclerView.adapter = adapter
