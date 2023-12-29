@@ -49,7 +49,7 @@
 
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/shimmer"
+        android:background="@drawable/save_24"
 
         app:layout_constraintBottom_toTopOf="@id/homeButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +61,7 @@
         android:id="@+id/downvoteButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/shimmer"
+        android:background="@drawable/outline_downvote"
         app:layout_constraintBottom_toTopOf="@id/commentsButton"
         app:layout_constraintEnd_toEndOf="parent"
 
@@ -71,7 +71,7 @@
         android:id="@+id/shareButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/shimmer"
+        android:background="@drawable/outline_share_24"
 
         app:layout_constraintBottom_toTopOf="@id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +82,7 @@
         android:id="@+id/commentsButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/shimmer"
+        android:background="@drawable/outline_comment_24"
 
         app:layout_constraintBottom_toTopOf="@id/shareButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,7 +95,7 @@
         android:id="@+id/upvoteButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/shimmer"
+        android:background="@drawable/upvote_2__2_"
 
         app:layout_constraintBottom_toTopOf="@id/downvoteButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,7 +119,6 @@
         android:id="@+id/seekbar1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/shimmer"
         android:progressDrawable="@android:color/transparent"
         android:max="100"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -128,6 +127,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="5dp"
+        android:visibility="invisible"
 
         />
 
