@@ -361,7 +361,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
     fun addPost(post:Post)
     {
         dataset.add(post)
-        notifyDataSetChanged()
+//        notifyDataSetChanged()
     }
 
     fun readMore(lastPost:String)
