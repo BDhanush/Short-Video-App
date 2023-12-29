@@ -166,6 +166,7 @@
         android:scrollbars="vertical"
         android:textSize="16dp"
         android:visibility="visible"
+        android:autoLink="web"
 
         app:layout_constraintBottom_toTopOf="@id/creatorName"
         app:layout_constraintLeft_toLeftOf="@id/title"
