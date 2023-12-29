@@ -28,6 +28,9 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class VideoItemAdapter(private val context: Context, val dataset:MutableList<Post>, val type:Int): RecyclerView.Adapter<VideoItemAdapter.ItemViewHolder>()
 {
@@ -181,6 +184,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
 
@@ -346,7 +350,9 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         }
         if(type== MULTIPLE_POST && position==itemCount-1)
         {
-            readMore(getLastPostKey());
+            GlobalScope.launch {
+                readMore(getLastPostKey());
+            }
         }
 
     }
