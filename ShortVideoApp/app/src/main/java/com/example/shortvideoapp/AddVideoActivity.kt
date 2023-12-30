@@ -245,6 +245,7 @@ class AddVideoActivity : AppCompatActivity() {
                                                 auth.currentUser!!.uid,
                                                 title,
                                                 description,
+                                                tagsText
                                             )
 
                                             //put details into Database

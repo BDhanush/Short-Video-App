@@ -133,10 +133,10 @@ class SearchActivity : AppCompatActivity() {
                     post.key = snapshot.key as String
 
                     if (post.title?.contains(searchPrefix, ignoreCase = true) == true ||
-                        post.tags?.contains(searchPrefix, ignoreCase = true) == true) {
+                        post.tagsText?.contains(searchPrefix, ignoreCase = true) == true) {
                         filteredList.add(post)
                     } else {
-                        val tags = post.tags?.split(",")?.map { it.trim() } ?: listOf()
+                        val tags = post.tagsText?.split(",")?.map { it.trim() } ?: listOf()
                         for (tag in tags) {
                             if (tag.contains(searchPrefix, ignoreCase = true)) {
                                 filteredList.add(post)
