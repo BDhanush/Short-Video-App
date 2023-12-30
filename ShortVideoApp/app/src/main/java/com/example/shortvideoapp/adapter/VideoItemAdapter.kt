@@ -13,6 +13,7 @@ import android.widget.*
 import android.widget.SeekBar.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,6 +25,8 @@ import com.example.shortvideoapp.firebasefunctions.postFromMap
 import com.example.shortvideoapp.model.Post
 import com.example.shortvideoapp.model.User
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
@@ -62,6 +65,7 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
         val progressBar:CircularProgressIndicator=view.findViewById(R.id.progressBar)
         val commentsButton:Button=view.findViewById(R.id.commentsButton)
         val searchButton:Button=view.findViewById(R.id.searchButton)
+        val tagsChipGroup:ChipGroup=view.findViewById(R.id.tagsChipGroup)
 
 
         init{
@@ -187,6 +191,12 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
     @OptIn(DelicateCoroutinesApi::class)
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
+        if(type== MULTIPLE_POST && position==itemCount-1)
+        {
+            GlobalScope.launch {
+                readMore(getLastPostKey());
+            }
+        }
 
         val PRELOAD_VIDEO_COUNT = 3;
         val nextVideos = dataset.subList(position + 1, minOf(position + 1 + PRELOAD_VIDEO_COUNT, dataset.size))
@@ -199,6 +209,25 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
 
         holder.videoTitle.text=item.title
         holder.videoDescription.text = item.description
+        var tagsList= mutableListOf<String>()
+
+        var databaseRefTagsList = database.child("posts").child("${item.key!!}/tags")
+        databaseRefTagsList.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for(snapshot in dataSnapshot.children) {
+                    val tag=snapshot.key as String
+                    tagsList.add(tag)
+                    addTagChip(tag,holder.tagsChipGroup)
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+
 
         databaseSavedPosts.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -348,12 +377,6 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
             holder.itemView.context.startActivity(intent)
 
         }
-        if(type== MULTIPLE_POST && position==itemCount-1)
-        {
-            GlobalScope.launch {
-                readMore(getLastPostKey());
-            }
-        }
 
     }
     /**
@@ -390,6 +413,18 @@ class VideoItemAdapter(private val context: Context, val dataset:MutableList<Pos
                 Log.w(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
             }
         })
+    }
+    fun addTagChip(tag:String,tagChipGroup: ChipGroup)
+    {
+        val chip=Chip(context)
+        chip.text=tag
+        chip.setOnClickListener {
+            val intent = Intent(context, SearchActivity::class.java)
+            intent.putExtra("tag", chip.text)
+            context.startActivity(intent)
+        }
+        tagChipGroup.addView(chip)
+
     }
 }
 

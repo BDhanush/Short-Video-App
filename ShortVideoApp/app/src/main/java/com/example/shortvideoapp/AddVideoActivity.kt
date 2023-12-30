@@ -2,17 +2,23 @@ package com.example.shortvideoapp
 
 import android.R.attr.bitmap
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract.CommonDataKinds.Im
 import android.provider.MediaStore
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.ImageSpan
+import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,12 +30,16 @@ import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.abedelazizshe.lightcompressorlibrary.config.SaveLocation
 import com.abedelazizshe.lightcompressorlibrary.config.SharedStorageConfiguration
 import com.bumptech.glide.Glide
+import com.example.shortvideoapp.firebasefunctions.databaseURL
 import com.example.shortvideoapp.model.Post
 import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
@@ -235,7 +245,6 @@ class AddVideoActivity : AppCompatActivity() {
                                                 auth.currentUser!!.uid,
                                                 title,
                                                 description,
-                                                tagsText
                                             )
 
                                             //put details into Database
@@ -255,6 +264,12 @@ class AddVideoActivity : AppCompatActivity() {
                                                                 "Video Uploaded",
                                                                 Toast.LENGTH_SHORT
                                                             ).show()
+                                                            val tagsList:List<String> = tagsText.split(',')
+                                                            val databaseRefTags = FirebaseDatabase.getInstance(databaseURL).getReference("posts/$timestamp/tags")
+                                                            for(i in tagsList)
+                                                            {
+                                                                databaseRefTags.child(i.trim()).setValue(true)
+                                                            }
 
                                                             // Delete the compressed video from local storage
                                                             val compressedVideoFile = path?.let { File(it) }

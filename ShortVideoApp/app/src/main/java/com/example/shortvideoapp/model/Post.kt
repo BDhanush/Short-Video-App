@@ -18,7 +18,7 @@ data class Post(var videoURL:String?=null,var thumbnail:String?=null,var uid:Str
         uid=map["uid"] as String,
         title=map["title"] as String,
         description=map["description"] as String,
-        tags=map["tags"] as? String? ?: ""){
+        ){
 
         if(map["key"]!=null)
             key = map["key"] as String

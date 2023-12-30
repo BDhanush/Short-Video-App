@@ -267,6 +267,16 @@
                 app:layout_constraintTop_toBottomOf="@id/upvoteLayout"
                 android:textColor="@color/white"
                 tools:text="hi" />
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/tagsChipGroup"
+                app:layout_constraintTop_toBottomOf="@id/description"
+                android:layout_width="match_parent"
+                app:chipSpacingVertical="-8dp"
+                android:layout_height="wrap_content">
+
+                <!-- Chips can be declared here, or added dynamically. -->
+
+            </com.google.android.material.chip.ChipGroup>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

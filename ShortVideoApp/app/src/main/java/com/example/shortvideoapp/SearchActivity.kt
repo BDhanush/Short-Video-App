@@ -33,12 +33,15 @@ class SearchActivity : AppCompatActivity() {
     val postDataset= mutableListOf<Post>()
     lateinit var adapter:SearchAdapter
     lateinit var searchRecyclerView: RecyclerView
+    var tag:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        tag=intent.getStringExtra("tag");
+
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
         val searchView:SearchView=findViewById(R.id.searchView)
@@ -57,6 +60,10 @@ class SearchActivity : AppCompatActivity() {
         binding.searchRecyclerView.setLayoutManager(layoutManager);
         binding.searchRecyclerView.setAdapter(adapter);
         readData()
+        if(tag!=null)
+        {
+            searchView.setText(tag)
+        }
         searchView.editText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
@@ -125,18 +132,18 @@ class SearchActivity : AppCompatActivity() {
                     val post = postFromMap(postMap)
                     post.key = snapshot.key as String
 
-                    if (post.title?.contains(searchPrefix, ignoreCase = true) == true ||
-                        post.tags?.contains(searchPrefix, ignoreCase = true) == true) {
-                        filteredList.add(post)
-                    } else {
-                        val tags = post.tags?.split(",")?.map { it.trim() } ?: listOf()
-                        for (tag in tags) {
-                            if (tag.contains(searchPrefix, ignoreCase = true)) {
-                                filteredList.add(post)
-                                break
-                            }
-                        }
-                    }
+//                    if (post.title?.contains(searchPrefix, ignoreCase = true) == true ||
+//                        post.tags?.contains(searchPrefix, ignoreCase = true) == true) {
+//                        filteredList.add(post)
+//                    } else {
+//                        val tags = post.tags?.split(",")?.map { it.trim() } ?: listOf()
+//                        for (tag in tags) {
+//                            if (tag.contains(searchPrefix, ignoreCase = true)) {
+//                                filteredList.add(post)
+//                                break
+//                            }
+//                        }
+//                    }
                 }
 
                 adapter = SearchAdapter(applicationContext, filteredList)
